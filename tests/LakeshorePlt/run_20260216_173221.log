@@ -1,0 +1,15 @@
+2026-02-16 17:32:21,378 - INFO - Program started.
+2026-02-16 17:32:21,379 - ERROR - Failed to connect to Model336.
+Traceback (most recent call last):
+  File "/Users/jacedunn/HYPER/prototype/NI/test.py", line 22, in <module>
+    sensor = Model336()
+             ^^^^^^^^^^
+  File "/Users/jacedunn/Projects/pythonProject/.venv/lib/python3.11/site-packages/lakeshore/model_336.py", line 166, in __init__
+    TemperatureController.__init__(self, serial_number, com_port, 57600, timeout, ip_address,
+  File "/Users/jacedunn/Projects/pythonProject/.venv/lib/python3.11/site-packages/lakeshore/temperature_controllers.py", line 139, in __init__
+    GenericInstrument.__init__(self, serial_number, com_port, baud_rate, 7, 1, serial.PARITY_ODD,
+  File "/Users/jacedunn/Projects/pythonProject/.venv/lib/python3.11/site-packages/lakeshore/generic_instrument.py", line 122, in __init__
+    self.connect_usb(serial_number, com_port, baud_rate, data_bits, stop_bits, parity,
+  File "/Users/jacedunn/Projects/pythonProject/.venv/lib/python3.11/site-packages/lakeshore/generic_instrument.py", line 269, in connect_usb
+    raise InstrumentException("No serial connections found")
+lakeshore.generic_instrument.InstrumentException: No serial connections found
