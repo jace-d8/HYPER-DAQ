@@ -518,6 +518,8 @@ def sensor_checklist_block(group_name: str, sensors: List[str]) -> html.Div:
                 value=sensors,
                 inputStyle={"margin-right": "8px", "accentColor": "#2563eb"},
                 labelStyle={"display": "block", "margin": "3px 0", "fontSize": "13px"},
+                persistence=True,
+                persistence_type="local",
             ),
         ],
         className="sensor-group-block",
@@ -611,17 +613,15 @@ def create_layout() -> html.Div:
     return html.Div(
         [
             dcc.Store(id="data-store", data=df_to_json(empty_frame())),
-            dcc.Store(id="pin-index-store", data=None),
+            dcc.Store(id="pin-index-store", data=None, storage_type="local"),
             dcc.Store(id="last-seen-time-store", data=None),
-            dcc.Store(id="notes-store", data=load_notes()),
+            dcc.Store(id="notes-store", data=load_notes(), storage_type="local"),
             dcc.Interval(id="stream-interval", interval=POLL_INTERVAL_MS, n_intervals=0, disabled=False),
             dcc.Download(id="download-data"),
             html.Div(
                 [
                     html.Div(
                         [
-                            html.Div("SAVE AS", className="panel-header"),
-                            html.Label("File type"),
                             dcc.Dropdown(
                                 id="save-format",
                                 options=[
@@ -631,6 +631,8 @@ def create_layout() -> html.Div:
                                 ],
                                 value="csv",
                                 clearable=False,
+                                persistence=True,
+                                persistence_type="local",
                             ),
                             dcc.Checklist(
                                 id="save-scope",
@@ -638,6 +640,8 @@ def create_layout() -> html.Div:
                                 value=["visible"],
                                 inputStyle={"margin-right": "8px"},
                                 labelStyle={"display": "block", "fontSize": "13px", "margin": "8px 0 4px 0"},
+                                persistence=True,
+                                persistence_type="local",
                             ),
                             html.Button("Save As", id="save-data-btn", className="btn purple-btn"),
                             html.Div(
@@ -654,6 +658,8 @@ def create_layout() -> html.Div:
                                 value=[],
                                 inputStyle={"margin-right": "8px"},
                                 labelStyle={"display": "block", "fontSize": "13px", "margin": "4px 0 6px 0"},
+                                persistence=True,
+                                persistence_type="local",
                             ),
                             html.Div(className="divider"),
                             html.Div("TOGGLE GRAPHS", className="panel-header"),
@@ -668,6 +674,8 @@ def create_layout() -> html.Div:
                                 value=["Pressure", "Temperature", "Mass Flow Rate", "H, Transferred"],
                                 inputStyle={"margin-right": "8px"},
                                 labelStyle={"display": "block", "fontSize": "13px", "margin": "3px 0"},
+                                persistence=True,
+                                persistence_type="local",
                             ),
                             html.Div(className="divider"),
                             html.Div("TOGGLE SENSORS", className="panel-header"),
