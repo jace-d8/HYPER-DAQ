@@ -56,9 +56,11 @@ DEFAULT_COLORS = {
 }
 
 POLL_INTERVAL_MS = 120
-DEFAULT_SLIDING_WINDOW_MIN = 12.0
+DEFAULT_SLIDING_WINDOW_MIN = 1.0 # Show past 1 min (user visual)
+SLIDING_WINDOW_ROWS = 120 # or 120 rows (system limit)
+AUTOSCALE_MAX_ROWS = 120_000 # show past hour or 120,000 rows
 NOTES_FILE = Path("notes_log.json")
-STREAM_SOURCE_FILE = Path("../backend/sensor_buffer.csv")
+STREAM_SOURCE_FILE = Path("sensor_buffer.csv")
 
 INLINE_CSS = """
 body {
@@ -423,10 +425,15 @@ def build_figure(
     x_max = float(df["time_min"].max())
 
     if use_sliding_window:
-        window_span = min(sliding_window_min, max(x_max - x_min, 0.5))
-        window_end = max(current_time, x_min + window_span)
-        window_start = max(x_min, window_end - window_span)
-        visible = df[df["time_min"] >= window_start].copy()
+        visible = df.tail(SLIDING_WINDOW_ROWS).copy()
+
+        if len(visible) >= 2:
+            window_start = float(visible.iloc[0]["time_min"])
+            window_end = float(visible.iloc[-1]["time_min"])
+        else:
+            window_end = current_time
+            window_start = max(x_min, window_end - sliding_window_min)
+
         x_range = [window_start, window_end]
     else:
         visible = df.copy()
@@ -592,7 +599,12 @@ def load_stream_source() -> pd.DataFrame:
     return DataAdapter.normalize(df)
 
 
-def append_new_stream_rows(cached_df: pd.DataFrame, source_df: pd.DataFrame, last_time: Optional[float]) -> pd.DataFrame:
+def append_new_stream_rows(
+    cached_df: pd.DataFrame,
+    source_df: pd.DataFrame,
+    last_time: Optional[float],
+    max_rows: Optional[int] = None,
+) -> pd.DataFrame:
     if source_df.empty:
         return cached_df
 
@@ -602,11 +614,16 @@ def append_new_stream_rows(cached_df: pd.DataFrame, source_df: pd.DataFrame, las
         fresh = source_df[source_df["time_min"] > float(last_time)].copy()
 
     if fresh.empty:
-        return cached_df
+        combined = cached_df
+    else:
+        combined = pd.concat([cached_df, fresh], ignore_index=True)
+        combined = combined.drop_duplicates(subset=["time_min"], keep="last")
+        combined = DataAdapter.normalize(combined)
 
-    combined = pd.concat([cached_df, fresh], ignore_index=True)
-    combined = combined.drop_duplicates(subset=["time_min"], keep="last")
-    return DataAdapter.normalize(combined)
+    if max_rows is not None and len(combined) > max_rows:
+        combined = combined.iloc[-max_rows:].reset_index(drop=True)
+
+    return combined
 
 
 def create_layout() -> html.Div:
@@ -786,7 +803,13 @@ def register_callbacks(app: Dash) -> None:
     def ingest_stream_file(n_intervals, data_json, last_seen_time):
         cached_df = read_df(data_json)
         source_df = load_stream_source()
-        updated_df = append_new_stream_rows(cached_df, source_df, last_seen_time)
+
+        updated_df = append_new_stream_rows(
+            cached_df,
+            source_df,
+            last_seen_time,
+            max_rows=AUTOSCALE_MAX_ROWS,
+        )
 
         if updated_df.empty:
             return df_to_json(updated_df), None
