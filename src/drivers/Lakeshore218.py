@@ -1,7 +1,6 @@
 import asyncio
 import serial
-import time
-from drivers.sensor_base import SensorBase
+from src.drivers.sensor_base import SensorBase
 
 
 class SerialTemperatureSensor(SensorBase):

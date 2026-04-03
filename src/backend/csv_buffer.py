@@ -13,7 +13,8 @@ class CsvBuffer:
         self._rows = []
         self._latest_by_sensor = {}
         self._available_sensors = {}
-        self._columns = ["timestamp", "time_min"]
+        self._columns = ["time_min"]
+        # self._columns = ["timestamp", "time_min"]
 
     def set_available_sensors(self, sensor_map):
         with self._lock:
@@ -21,14 +22,14 @@ class CsvBuffer:
                 group: list(sensors) for group, sensors in sensor_map.items()
             }
 
-            columns = ["timestamp", "time_min"]
+            # columns = ["timestamp", "time_min"]
+            columns = ["time"]
             for _, sensors in self._available_sensors.items():
                 for sensor in sensors:
                     if sensor not in columns:
                         columns.append(sensor)
 
             self._columns = columns
-
             self._ensure_csv_headers()
 
     def update_sensor(self, sensor_name, timestamp, value):

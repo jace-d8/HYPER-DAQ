@@ -58,7 +58,7 @@ DEFAULT_COLORS = {
 POLL_INTERVAL_MS = 120
 DEFAULT_SLIDING_WINDOW_MIN = 12.0
 NOTES_FILE = Path("notes_log.json")
-STREAM_SOURCE_FILE = Path("fake_live_stream.csv")
+STREAM_SOURCE_FILE = Path("../backend/sensor_buffer.csv")
 
 INLINE_CSS = """
 body {

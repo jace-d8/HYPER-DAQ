@@ -1,6 +1,6 @@
 import asyncio
 from lakeshore import Model336
-from drivers.sensor_base import SensorBase
+from src.drivers.sensor_base import SensorBase
 
 
 class TemperatureSensor(SensorBase):  # First 3 lines "standard"

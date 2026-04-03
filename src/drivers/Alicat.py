@@ -1,4 +1,3 @@
-import asyncio
 from src.drivers.sensor_base import SensorBase
 from alicat import FlowController
 

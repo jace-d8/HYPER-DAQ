@@ -1,4 +1,0 @@
-2026-04-01 15:55:47,050 - ERROR - Lakeshore336 failed to initialize: No serial connections found
-2026-04-01 15:55:47,050 - ERROR - Lakeshore218 failed to initialize: [Errno 2] could not open port /dev/tty.usbserial-FTDZA5QJ: [Errno 2] No such file or directory: '/dev/tty.usbserial-FTDZA5QJ'
-2026-04-01 15:55:47,051 - ERROR - Alicat failed to initialize: [Errno 2] could not open port /dev/ttyUSB0: [Errno 2] No such file or directory: '/dev/ttyUSB0'
-2026-04-01 15:55:47,051 - WARNING - No sensors initialized successfully

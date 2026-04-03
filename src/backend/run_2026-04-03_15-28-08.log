@@ -1,0 +1,79 @@
+2026-04-03 15:28:08,627 - INFO - Sent query to None: *IDN?
+2026-04-03 15:28:08,627 - INFO - Received response from None: LSCI,MODEL336,336AA5X/#######,2.8
+2026-04-03 15:28:08,627 - INFO - TS1 initialized
+2026-04-03 15:28:08,627 - ERROR - Temperature sensor failed to initialize: [Errno 2] could not open port /dev/tty.usbserial-FTDZA5QJ: [Errno 2] No such file or directory: '/dev/tty.usbserial-FTDZA5QJ'
+2026-04-03 15:28:08,629 - ERROR - Mass Flow Rate sensor failed to initialize: [Errno 2] could not open port /dev/ttyUSB0: [Errno 2] No such file or directory: '/dev/ttyUSB0'
+2026-04-03 15:28:08,635 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-03 15:28:08,635 - INFO - Received response from 336AA5X: +294.374;000
+2026-04-03 15:28:09,136 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-03 15:28:09,136 - INFO - Received response from 336AA5X: +294.378;000
+2026-04-03 15:28:09,637 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-03 15:28:09,637 - INFO - Received response from 336AA5X: +294.376;000
+2026-04-03 15:28:10,138 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-03 15:28:10,138 - INFO - Received response from 336AA5X: +294.374;000
+2026-04-03 15:28:10,639 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-03 15:28:10,639 - INFO - Received response from 336AA5X: +294.376;000
+2026-04-03 15:28:11,140 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-03 15:28:11,140 - INFO - Received response from 336AA5X: +294.376;000
+2026-04-03 15:28:11,641 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-03 15:28:11,641 - INFO - Received response from 336AA5X: +294.378;000
+2026-04-03 15:28:12,142 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-03 15:28:12,143 - INFO - Received response from 336AA5X: +294.378;000
+2026-04-03 15:28:12,644 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-03 15:28:12,644 - INFO - Received response from 336AA5X: +294.379;000
+2026-04-03 15:28:13,144 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-03 15:28:13,144 - INFO - Received response from 336AA5X: +294.379;000
+2026-04-03 15:28:13,646 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-03 15:28:13,646 - INFO - Received response from 336AA5X: +294.382;000
+2026-04-03 15:28:14,147 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-03 15:28:14,147 - INFO - Received response from 336AA5X: +294.381;000
+2026-04-03 15:28:14,648 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-03 15:28:14,648 - INFO - Received response from 336AA5X: +294.381;000
+2026-04-03 15:28:15,148 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-03 15:28:15,148 - INFO - Received response from 336AA5X: +294.382;000
+2026-04-03 15:28:15,649 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-03 15:28:15,649 - INFO - Received response from 336AA5X: +294.381;000
+2026-04-03 15:28:16,150 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-03 15:28:16,150 - INFO - Received response from 336AA5X: +294.383;000
+2026-04-03 15:28:16,651 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-03 15:28:16,651 - INFO - Received response from 336AA5X: +294.379;000
+2026-04-03 15:28:17,152 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-03 15:28:17,152 - INFO - Received response from 336AA5X: +294.379;000
+2026-04-03 15:28:17,653 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-03 15:28:17,653 - INFO - Received response from 336AA5X: +294.381;000
+2026-04-03 15:28:18,154 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-03 15:28:18,154 - INFO - Received response from 336AA5X: +294.379;000
+2026-04-03 15:28:18,655 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-03 15:28:18,655 - INFO - Received response from 336AA5X: +294.379;000
+2026-04-03 15:28:19,155 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-03 15:28:19,155 - INFO - Received response from 336AA5X: +294.381;000
+2026-04-03 15:28:19,656 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-03 15:28:19,656 - INFO - Received response from 336AA5X: +294.379;000
+2026-04-03 15:28:20,157 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-03 15:28:20,157 - INFO - Received response from 336AA5X: +294.381;000
+2026-04-03 15:28:20,658 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-03 15:28:20,658 - INFO - Received response from 336AA5X: +294.381;000
+2026-04-03 15:28:21,159 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-03 15:28:21,159 - INFO - Received response from 336AA5X: +294.379;000
+2026-04-03 15:28:21,660 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-03 15:28:21,660 - INFO - Received response from 336AA5X: +294.378;000
+2026-04-03 15:28:22,162 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-03 15:28:22,162 - INFO - Received response from 336AA5X: +294.379;000
+2026-04-03 15:28:22,663 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-03 15:28:22,663 - INFO - Received response from 336AA5X: +294.378;000
+2026-04-03 15:28:23,164 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-03 15:28:23,164 - INFO - Received response from 336AA5X: +294.381;000
+2026-04-03 15:28:23,665 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-03 15:28:23,665 - INFO - Received response from 336AA5X: +294.374;000
+2026-04-03 15:28:24,166 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-03 15:28:24,166 - INFO - Received response from 336AA5X: +294.381;000
+2026-04-03 15:28:24,666 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-03 15:28:24,667 - INFO - Received response from 336AA5X: +294.378;000
+2026-04-03 15:28:25,168 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-03 15:28:25,168 - INFO - Received response from 336AA5X: +294.383;000
+2026-04-03 15:28:25,668 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-03 15:28:25,668 - INFO - Received response from 336AA5X: +294.379;000
+2026-04-03 15:28:26,169 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-03 15:28:26,169 - INFO - Received response from 336AA5X: +294.382;000
+2026-04-03 15:28:26,664 - ERROR - TS1 read failed: write failed: [Errno 6] Device not configured
+2026-04-03 15:28:27,164 - WARNING - TS1 loop stopped after read failure

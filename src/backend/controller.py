@@ -2,9 +2,9 @@ import asyncio
 import logging
 from datetime import datetime
 
-from drivers.Lakeshore218 import SerialTemperatureSensor
-from drivers.Lakeshore336 import TemperatureSensor
-from drivers.Alicat import Alicat
+from src.drivers.Lakeshore218 import SerialTemperatureSensor
+from src.drivers.Lakeshore336 import TemperatureSensor
+from src.drivers.Alicat import Alicat
 
 
 class SensorControllerAsync:
@@ -43,7 +43,7 @@ class SensorControllerAsync:
             except Exception as e:
                 logging.error(f"{group_name} sensor failed to initialize: {e}")
 
-        available["H, Transferred"] = ["H, Transferred"]
+        # available["H, Transferred"] = ["H, Transferred"]
         self.csv_buffer.set_available_sensors(available)
 
     async def read_one(self, sensor):
@@ -84,22 +84,27 @@ class SensorControllerAsync:
         while True:
             elapsed_seconds = asyncio.get_running_loop().time() - self.start_loop_time
 
+            # row = {
+            #     "timestamp": datetime.now().isoformat(timespec="milliseconds"),
+            #     "time_min": elapsed_seconds / 60.0,
+            # }
+
+            # timestamp only (for now)
             row = {
-                "timestamp": datetime.now().isoformat(timespec="milliseconds"),
-                "time_min": elapsed_seconds / 60.0,
+                "time": elapsed_seconds / 60.0,
             }
 
             for sensor_name, payload in self.latest_readings.items():
                 row[sensor_name] = payload["value"]
 
-            flow_value = row.get("Total Flow")
-            if flow_value is not None:
-                try:
-                    self.transferred_total_kg += max(float(flow_value), 0.0) * self.period / 1000.0
-                except Exception:
-                    pass
-
-            row["H, Transferred"] = self.transferred_total_kg
+            # flow_value = row.get("Total Flow")
+            # if flow_value is not None:
+            #     try:
+            #         self.transferred_total_kg += max(float(flow_value), 0.0) * self.period / 1000.0
+            #     except Exception:
+            #         pass
+            #
+            # row["H, Transferred"] = self.transferred_total_kg
 
             self.csv_buffer.append_snapshot(row)
 
