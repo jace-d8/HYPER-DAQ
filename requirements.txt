@@ -1,4 +1,9 @@
-Lakeshore driver needed (link driver later)
-NI driver needed (link driver later)
-
-List libraries
+Ldash
+plotly
+pandas
+numpy
+pyserial
+alicat
+lakeshore
+openpyxl
+nidaqmx
