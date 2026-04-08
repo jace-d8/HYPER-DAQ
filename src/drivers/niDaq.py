@@ -1,4 +1,4 @@
-import nidaqmx
+# import nidaqmx
 #
 # from nidaqmx.constants import (
 #     TerminalConfiguration,   # RSE, NRSE, Differential wiring modes
