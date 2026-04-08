@@ -59,7 +59,7 @@
 #             "DEFAULT": TerminalConfiguration.DEFAULT,
 #             "RSE": TerminalConfiguration.RSE,
 #             "NRSE": TerminalConfiguration.NRSE,
-#             "DIFF": TerminalConfiguration.DIFFERENTIAL,
+#             "DIFF": TerminalConfiguration.DIFF,
 #         }.get(self.config.terminal_config.upper(), TerminalConfiguration.DEFAULT)
 #
 #     # Convert thermocouple string → enum
