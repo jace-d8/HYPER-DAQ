@@ -22,7 +22,18 @@ class SensorControllerAsync:
             ("Temperature", lambda: TemperatureSensor(name="TS1", channel="A")),
             ("Temperature", lambda: SerialTemperatureSensor(name="TS2")),
             ("Mass Flow Rate", lambda: Alicat(name="Total Flow")),
-            # ("Pressure", lambda: NiDaqAnalogInput(name="PT1", channel="Dev1/ai0"))
+            # ("Pressure",
+            #     lambda: NiDaqAnalogInput(
+            #         NiDaqChannelConfig(
+            #             name="PT1",
+            #             physical_channel="Dev1/ai0",
+            #             measurement_type="voltage",
+            #             min_val=0.0,
+            #             max_val=5.0,
+            #             terminal_config="RSE",
+            #         )
+            #     ),
+            # ),
         ]
 
         available = {}
