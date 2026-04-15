@@ -14,7 +14,6 @@ class CsvBuffer:
         self._latest_by_sensor = {}
         self._available_sensors = {}
         self._columns = ["time_min"]
-        # self._columns = ["timestamp", "time_min"]
 
     def set_available_sensors(self, sensor_map):
         with self._lock:
@@ -22,8 +21,7 @@ class CsvBuffer:
                 group: list(sensors) for group, sensors in sensor_map.items()
             }
 
-            # columns = ["timestamp", "time_min"]
-            columns = ["time"]
+            columns = ["time_min"]
             for _, sensors in self._available_sensors.items():
                 for sensor in sensors:
                     if sensor not in columns:
@@ -31,6 +29,7 @@ class CsvBuffer:
 
             self._columns = columns
             self._ensure_csv_headers()
+            self._load_existing_buffer_rows()
 
     def update_sensor(self, sensor_name, timestamp, value):
         with self._lock:
@@ -44,12 +43,12 @@ class CsvBuffer:
             normalized_row = {col: row.get(col, "") for col in self._columns}
 
             self._append_data_row(normalized_row)
+            self._append_buffer_row(normalized_row)
 
             self._rows.append(normalized_row)
             if len(self._rows) > self.max_rows:
                 self._rows = self._rows[-self.max_rows:]
-
-            self._rewrite_buffer_csv()
+                self._rewrite_buffer_csv()
 
     def _ensure_csv_headers(self):
         if not os.path.exists(self.data_csv) or os.path.getsize(self.data_csv) == 0:
@@ -71,8 +70,29 @@ class CsvBuffer:
                 writer.writeheader()
             writer.writerow(row)
 
+    def _append_buffer_row(self, row):
+        file_exists = os.path.exists(self.buffer_csv) and os.path.getsize(self.buffer_csv) > 0
+
+        with open(self.buffer_csv, "a", newline="") as f:
+            writer = csv.DictWriter(f, fieldnames=self._columns)
+            if not file_exists:
+                writer.writeheader()
+            writer.writerow(row)
+
     def _rewrite_buffer_csv(self):
         with open(self.buffer_csv, "w", newline="") as f:
             writer = csv.DictWriter(f, fieldnames=self._columns)
             writer.writeheader()
             writer.writerows(self._rows)
+
+    def _load_existing_buffer_rows(self):
+        if not os.path.exists(self.buffer_csv) or os.path.getsize(self.buffer_csv) == 0:
+            self._rows = []
+            return
+
+        try:
+            with open(self.buffer_csv, "r", newline="") as f:
+                reader = csv.DictReader(f)
+                self._rows = list(reader)[-self.max_rows:]
+        except Exception:
+            self._rows = []

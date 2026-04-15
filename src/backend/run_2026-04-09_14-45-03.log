@@ -1,4 +1,0 @@
-2026-04-09 14:45:03,415 - ERROR - Temperature sensor failed to initialize: No serial connections found
-2026-04-09 14:45:03,415 - ERROR - Temperature sensor failed to initialize: [Errno 2] could not open port /dev/tty.usbserial-FTDZA5QJ: [Errno 2] No such file or directory: '/dev/tty.usbserial-FTDZA5QJ'
-2026-04-09 14:45:03,416 - ERROR - Mass Flow Rate sensor failed to initialize: [Errno 2] could not open port /dev/ttyUSB0: [Errno 2] No such file or directory: '/dev/ttyUSB0'
-2026-04-09 14:45:03,416 - WARNING - No sensors initialized successfully

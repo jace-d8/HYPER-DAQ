@@ -6,6 +6,12 @@ from src.drivers.Lakeshore218 import SerialTemperatureSensor
 from src.drivers.Lakeshore336 import TemperatureSensor
 from src.drivers.Alicat import Alicat
 
+try:
+    from niDaq import NiDaqAnalogInput, NiDaqChannelConfig
+except Exception:
+    NiDaqAnalogInput = None
+    NiDaqChannelConfig = None
+
 
 class SensorControllerAsync:
     def __init__(self, csv_buffer, sample_hz=1):
@@ -22,19 +28,27 @@ class SensorControllerAsync:
             ("Temperature", lambda: TemperatureSensor(name="TS1", channel="A")),
             ("Temperature", lambda: SerialTemperatureSensor(name="TS2")),
             ("Mass Flow Rate", lambda: Alicat(name="Total Flow")),
-            # ("Pressure",
-            #     lambda: NiDaqAnalogInput(
-            #         NiDaqChannelConfig(
-            #             name="PT1",
-            #             physical_channel="Dev1/ai0",
-            #             measurement_type="voltage",
-            #             min_val=0.0,
-            #             max_val=5.0,
-            #             terminal_config="RSE",
-            #         )
-            #     ),
-            # ),
         ]
+
+        # if NiDaqAnalogInput is not None and NiDaqChannelConfig is not None:
+        #     sensors_specifications.append(
+        #         (
+        #             "Pressure",
+        #             lambda: NiDaqAnalogInput(
+        #                 NiDaqChannelConfig(
+        #                     name="PT1",
+        #                     physical_channel="Dev1/ai0",
+        #                     measurement_type="voltage",
+        #                     min_val=0.0,
+        #                     max_val=5.0,
+        #                     terminal_config="RSE",
+        #                     sample_hz=1000,
+        #                     samples_per_read=50,
+        #                     reduction="mean",
+        #                 )
+        #             ),
+        #         )
+        #     )
 
         available = {}
 
@@ -54,7 +68,6 @@ class SensorControllerAsync:
             except Exception as e:
                 logging.error(f"{group_name} sensor failed to initialize: {e}")
 
-        # available["H, Transferred"] = ["H, Transferred"]
         self.csv_buffer.set_available_sensors(available)
 
     async def read_one(self, sensor):
@@ -95,27 +108,12 @@ class SensorControllerAsync:
         while True:
             elapsed_seconds = asyncio.get_running_loop().time() - self.start_loop_time
 
-            # row = {
-            #     "timestamp": datetime.now().isoformat(timespec="milliseconds"),
-            #     "time_min": elapsed_seconds / 60.0,
-            # }
-
-            # timestamp only (for now)
             row = {
-                "time": elapsed_seconds / 60.0,
+                "time_min": elapsed_seconds / 60.0,
             }
 
             for sensor_name, payload in self.latest_readings.items():
                 row[sensor_name] = payload["value"]
-
-            # flow_value = row.get("Total Flow")
-            # if flow_value is not None:
-            #     try:
-            #         self.transferred_total_kg += max(float(flow_value), 0.0) * self.period / 1000.0
-            #     except Exception:
-            #         pass
-            #
-            # row["H, Transferred"] = self.transferred_total_kg
 
             self.csv_buffer.append_snapshot(row)
 

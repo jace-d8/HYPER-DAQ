@@ -1,18 +1,19 @@
-# import nidaqmx
+# import asyncio
+# from dataclasses import dataclass
 #
+# import nidaqmx
+# import numpy as np
 # from nidaqmx.constants import (
+#     AcquisitionType,
+#     CurrentShuntResistorLocation,
+#     CurrentUnits,
+#     ExcitationSource,
+#     ResistanceConfiguration,
+#     RTDType,
+#     TemperatureUnits,
 #     TerminalConfiguration,
 #     ThermocoupleType,
-#     TemperatureUnits,
-#     RTDType,
-#     ResistanceConfiguration,
-#     ExcitationSource,
-#     AcquisitionType,
-#     CurrentUnits,
-#     CurrentShuntResistorLocation,
 # )
-#
-# from dataclasses import dataclass
 #
 #
 # @dataclass
@@ -21,8 +22,6 @@
 #     physical_channel: str
 #
 #     measurement_type: str = "voltage"
-#     # "voltage", "current", "thermocouple", "rtd"
-#
 #     min_val: float = -10.0
 #     max_val: float = 10.0
 #
@@ -30,6 +29,8 @@
 #     units: str = "volts"
 #
 #     sample_hz: float | None = None
+#     samples_per_read: int = 50
+#     reduction: str = "mean"
 #
 #     thermocouple_type: str = "K"
 #     cjc_source: str = "BUILT_IN"
@@ -40,7 +41,6 @@
 #     current_excit_val: float = 0.001
 #     r_0: float = 100.0
 #
-#     # Current input specific settings
 #     shunt_resistor_loc: str = "LET_DRIVER_CHOOSE"
 #     ext_shunt_resistor_val: float = 249.0
 #
@@ -143,12 +143,27 @@
 #             self.task.timing.cfg_samp_clk_timing(
 #                 rate=self.config.sample_hz,
 #                 sample_mode=AcquisitionType.CONTINUOUS,
+#                 samps_per_chan=max(self.config.samples_per_read * 10, 100),
 #             )
 #
 #     async def read(self):
 #         if self.task is None:
 #             raise RuntimeError("DAQ task not initialized")
-#         return float(self.task.read())
+#
+#         samples = await asyncio.to_thread(
+#             self.task.read,
+#             number_of_samples_per_channel=self.config.samples_per_read,
+#         )
+#
+#         arr = np.asarray(samples, dtype=float).reshape(-1)
+#
+#         if arr.size == 0:
+#             raise RuntimeError("DAQ returned no samples")
+#
+#         if self.config.reduction.lower() == "last":
+#             return float(arr[-1])
+#
+#         return float(arr.mean())
 #
 #     def close(self):
 #         if self.task:
