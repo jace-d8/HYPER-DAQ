@@ -29,8 +29,11 @@ async def main():
     try:
         await controller.run()
     finally:
-        controller.close()
+        await controller.shutdown()
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        pass

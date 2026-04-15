@@ -7,7 +7,7 @@ from src.drivers.Lakeshore336 import TemperatureSensor
 from src.drivers.Alicat import Alicat
 
 try:
-    from niDaq import NiDaqAnalogInput, NiDaqChannelConfig
+    from src.drivers.niDaq import NiDaqAnalogInput, NiDaqChannelConfig
 except Exception:
     NiDaqAnalogInput = None
     NiDaqChannelConfig = None
@@ -22,6 +22,8 @@ class SensorControllerAsync:
         self.csv_buffer = csv_buffer
         self.start_loop_time = None
         self.transferred_total_kg = 0.0
+        self._tasks = []
+        self._stop_event = asyncio.Event()
 
     async def _init_sensors(self):
         sensors_specifications = [
@@ -30,29 +32,30 @@ class SensorControllerAsync:
             ("Mass Flow Rate", lambda: Alicat(name="Total Flow")),
         ]
 
-        # if NiDaqAnalogInput is not None and NiDaqChannelConfig is not None:
-        #     sensors_specifications.append(
-        #         (
-        #             "Pressure",
-        #             lambda: NiDaqAnalogInput(
-        #                 NiDaqChannelConfig(
-        #                     name="PT1",
-        #                     physical_channel="Dev1/ai0",
-        #                     measurement_type="voltage",
-        #                     min_val=0.0,
-        #                     max_val=5.0,
-        #                     terminal_config="RSE",
-        #                     sample_hz=1000,
-        #                     samples_per_read=50,
-        #                     reduction="mean",
-        #                 )
-        #             ),
-        #         )
-        #     )
+        if NiDaqAnalogInput is not None and NiDaqChannelConfig is not None:
+            sensors_specifications.append(
+                (
+                    "Pressure",
+                    lambda: NiDaqAnalogInput(
+                        NiDaqChannelConfig(
+                            name="PT1",
+                            physical_channel="Dev1/ai0",
+                            measurement_type="voltage",
+                            min_val=0.0,
+                            max_val=5.0,
+                            terminal_config="RSE",
+                            sample_hz=1000,
+                            samples_per_read=50,
+                            reduction="mean",
+                        )
+                    ),
+                )
+            )
 
         available = {}
 
         for group_name, sensor_init in sensors_specifications:
+            sensor = None
             try:
                 sensor = sensor_init()
 
@@ -65,14 +68,26 @@ class SensorControllerAsync:
                 self.sensors.append(sensor)
                 available.setdefault(group_name, []).append(sensor.name)
                 logging.info(f"{sensor.name} initialized")
+
             except Exception as e:
                 logging.error(f"{group_name} sensor failed to initialize: {e}")
+
+                if sensor is not None:
+                    try:
+                        if hasattr(sensor, "close") and callable(sensor.close):
+                            maybe = sensor.close()
+                            if asyncio.iscoroutine(maybe):
+                                await maybe
+                    except Exception as close_err:
+                        logging.error(f"Failed to close partially initialized sensor: {close_err}")
 
         self.csv_buffer.set_available_sensors(available)
 
     async def read_one(self, sensor):
         try:
-            value = await sensor.read()
+            maybe = sensor.read()
+            value = await maybe if asyncio.iscoroutine(maybe) else maybe
+
             timestamp = datetime.now().isoformat(timespec="milliseconds")
 
             self.latest_readings[sensor.name] = {
@@ -81,8 +96,10 @@ class SensorControllerAsync:
             }
 
             self.csv_buffer.update_sensor(sensor.name, timestamp, value)
-
             return sensor.name, value
+
+        except asyncio.CancelledError:
+            raise
 
         except Exception as e:
             logging.error(f"{sensor.name} read failed: {e}")
@@ -90,34 +107,52 @@ class SensorControllerAsync:
             return sensor.name, None
 
     async def sensor_loop(self, sensor):
-        while not getattr(sensor, "failed", False):
-            start = asyncio.get_running_loop().time()
+        try:
+            while not self._stop_event.is_set() and not getattr(sensor, "failed", False):
+                start = asyncio.get_running_loop().time()
 
-            await self.read_one(sensor)
+                await self.read_one(sensor)
 
-            elapsed = asyncio.get_running_loop().time() - start
-            sleep_time = max(0, self.period - elapsed)
-            await asyncio.sleep(sleep_time)
+                elapsed = asyncio.get_running_loop().time() - start
+                sleep_time = max(0, self.period - elapsed)
 
-        logging.warning(f"{sensor.name} loop stopped after read failure")
+                try:
+                    await asyncio.wait_for(self._stop_event.wait(), timeout=sleep_time)
+                except asyncio.TimeoutError:
+                    pass
+
+            if getattr(sensor, "failed", False):
+                logging.warning(f"{sensor.name} loop stopped after read failure")
+
+        except asyncio.CancelledError:
+            logging.info(f"{sensor.name} loop cancelled")
+            raise
 
     async def snapshot_loop(self):
         if self.start_loop_time is None:
             self.start_loop_time = asyncio.get_running_loop().time()
 
-        while True:
-            elapsed_seconds = asyncio.get_running_loop().time() - self.start_loop_time
+        try:
+            while not self._stop_event.is_set():
+                elapsed_seconds = asyncio.get_running_loop().time() - self.start_loop_time
 
-            row = {
-                "time_min": elapsed_seconds / 60.0,
-            }
+                row = {
+                    "time_min": elapsed_seconds / 60.0,
+                }
 
-            for sensor_name, payload in self.latest_readings.items():
-                row[sensor_name] = payload["value"]
+                for sensor_name, payload in self.latest_readings.items():
+                    row[sensor_name] = payload["value"]
 
-            self.csv_buffer.append_snapshot(row)
+                self.csv_buffer.append_snapshot(row)
 
-            await asyncio.sleep(self.period)
+                try:
+                    await asyncio.wait_for(self._stop_event.wait(), timeout=self.period)
+                except asyncio.TimeoutError:
+                    pass
+
+        except asyncio.CancelledError:
+            logging.info("Snapshot loop cancelled")
+            raise
 
     async def run(self):
         await self._init_sensors()
@@ -126,18 +161,46 @@ class SensorControllerAsync:
             logging.warning("No sensors initialized successfully")
             return
 
-        sensor_tasks = [
-            asyncio.create_task(self.sensor_loop(sensor))
+        self._stop_event.clear()
+        self._tasks = [
+            asyncio.create_task(self.sensor_loop(sensor), name=f"sensor_loop:{sensor.name}")
             for sensor in self.sensors
         ]
+        self._tasks.append(asyncio.create_task(self.snapshot_loop(), name="snapshot_loop"))
 
-        snapshot_task = asyncio.create_task(self.snapshot_loop())
+        try:
+            await asyncio.gather(*self._tasks)
 
-        await asyncio.gather(*sensor_tasks, snapshot_task)
+        except asyncio.CancelledError:
+            logging.info("Sensor controller run cancelled")
+            raise
 
-    def close(self):
+        finally:
+            await self.shutdown()
+
+    async def shutdown(self):
+        self._stop_event.set()
+
+        tasks = [task for task in self._tasks if not task.done()]
+        for task in tasks:
+            task.cancel()
+
+        if tasks:
+            results = await asyncio.gather(*tasks, return_exceptions=True)
+            for result in results:
+                if isinstance(result, Exception) and not isinstance(result, asyncio.CancelledError):
+                    logging.error(f"Task shutdown error: {result}")
+
+        self._tasks.clear()
+        await self.close()
+
+    async def close(self):
         for sensor in self.sensors:
             try:
-                sensor.close()
+                if hasattr(sensor, "close") and callable(sensor.close):
+                    maybe = sensor.close()
+                    if asyncio.iscoroutine(maybe):
+                        await maybe
             except Exception as e:
-                logging.error(f"Failed to close {sensor.name}: {e}")
+                name = getattr(sensor, "name", repr(sensor))
+                logging.error(f"Failed to close {name}: {e}")
