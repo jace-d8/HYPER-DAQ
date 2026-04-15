@@ -85,21 +85,32 @@ class SensorControllerAsync:
 
     async def read_one(self, sensor):
         try:
-            maybe = sensor.read()
-            value = await maybe if asyncio.iscoroutine(maybe) else maybe
+            payload = await sensor.read()
+
+            if isinstance(payload, dict) and payload.get("kind") == "timeseries":
+                timestamps = payload["timestamps"]
+                values = payload["values"]
+
+                self.latest_readings[sensor.name] = {
+                    "timestamp": timestamps[-1],
+                    "value": values[-1],
+                    "series": payload,
+                }
+
+                for ts, val in zip(timestamps, values):
+                    self.csv_buffer.update_sensor(sensor.name, ts, val)
+
+                return sensor.name, payload
 
             timestamp = datetime.now().isoformat(timespec="milliseconds")
 
             self.latest_readings[sensor.name] = {
                 "timestamp": timestamp,
-                "value": value,
+                "value": payload,
             }
 
-            self.csv_buffer.update_sensor(sensor.name, timestamp, value)
-            return sensor.name, value
-
-        except asyncio.CancelledError:
-            raise
+            self.csv_buffer.update_sensor(sensor.name, timestamp, payload)
+            return sensor.name, payload
 
         except Exception as e:
             logging.error(f"{sensor.name} read failed: {e}")
