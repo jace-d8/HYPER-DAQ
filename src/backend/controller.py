@@ -6,11 +6,11 @@ from src.drivers.Lakeshore218 import SerialTemperatureSensor
 from src.drivers.Lakeshore336 import TemperatureSensor
 from src.drivers.Alicat import Alicat
 
-try:
-    from src.drivers.niDaq import NiDaqAnalogInput, NiDaqChannelConfig
-except Exception:
-    NiDaqAnalogInput = None
-    NiDaqChannelConfig = None
+# try:
+#     from src.drivers.niDaq import NiDaqAnalogInput, NiDaqChannelConfig
+# except Exception:
+#     NiDaqAnalogInput = None
+#     NiDaqChannelConfig = None
 
 
 class SensorControllerAsync:
@@ -32,25 +32,25 @@ class SensorControllerAsync:
             ("Mass Flow Rate", lambda: Alicat(name="Total Flow")),
         ]
 
-        if NiDaqAnalogInput is not None and NiDaqChannelConfig is not None:
-            sensors_specifications.append(
-                (
-                    "Pressure",
-                    lambda: NiDaqAnalogInput(
-                        NiDaqChannelConfig(
-                            name="PT1",
-                            physical_channel="Dev1/ai0",
-                            measurement_type="voltage",
-                            min_val=0.0,
-                            max_val=5.0,
-                            terminal_config="RSE",
-                            sample_hz=1000,
-                            samples_per_read=50,
-                            reduction="mean",
-                        )
-                    ),
-                )
-            )
+        # if NiDaqAnalogInput is not None and NiDaqChannelConfig is not None:
+        #     sensors_specifications.append(
+        #         (
+        #             "Pressure",
+        #             lambda: NiDaqAnalogInput(
+        #                 NiDaqChannelConfig(
+        #                     name="PT1",
+        #                     physical_channel="Dev1/ai0",
+        #                     measurement_type="voltage",
+        #                     min_val=0.0,
+        #                     max_val=5.0,
+        #                     terminal_config="RSE",
+        #                     sample_hz=1000,
+        #                     samples_per_read=50,
+        #                     reduction="mean",
+        #                 )
+        #             ),
+        #         )
+        #     )
 
         available = {}
 

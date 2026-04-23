@@ -42,12 +42,12 @@ DEFAULT_COLORS = {
 }
 
 POLL_INTERVAL_MS = 120
-DEFAULT_SLIDING_WINDOW_MIN = 1.0
-SLIDING_WINDOW_ROWS = 120
+DEFAULT_WINDOW_VALUE = 5.0
+DEFAULT_WINDOW_UNIT = "min"
+WINDOW_UNIT_TO_MINUTES = {"min": 1.0, "hr": 60.0}
 AUTOSCALE_MAX_ROWS = 120_000
-
 NOTES_FILE = Path("notes_log.json")
-STREAM_SOURCE_FILE = Path("../backend/sensor_buffer.csv")
+STREAM_SOURCE_FILE = Path("../backend/test_stream.csv")
 
 INLINE_CSS = """
 body {

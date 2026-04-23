@@ -23,7 +23,7 @@ async def main():
 
     controller = SensorControllerAsync(
         csv_buffer=csv_buffer,
-        sample_hz=2,
+        sample_hz=10,
     )
 
     try:

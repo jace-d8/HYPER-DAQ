@@ -1,24 +1,59 @@
 from __future__ import annotations
 
+import json
 from typing import List
 
 import dash
 import pandas as pd
-from dash import ALL, Dash, Input, Output, State, callback_context, dcc
+from dash import ALL, Dash, Input, Output, Patch, State, callback_context, dcc
 
-from config import ALL_SENSOR_GROUPS, APP_TITLE, AUTOSCALE_MAX_ROWS, INLINE_CSS
+from config import ALL_SENSOR_GROUPS, APP_TITLE, AUTOSCALE_MAX_ROWS, INLINE_CSS, WINDOW_UNIT_TO_MINUTES
 from data import (
     append_new_stream_rows,
     df_to_json,
     ensure_stream_source_exists,
     export_data_bytes,
     infer_available_sensors,
-    load_notes,
     load_stream_source,
     read_df,
     save_notes,
 )
 from ui import build_figure, create_layout, metric_table, render_notes_log, sensor_checklist_block
+
+
+def _safe_window_minutes(window_value, window_unit) -> float:
+    unit_scale = WINDOW_UNIT_TO_MINUTES.get(window_unit or "min", 1.0)
+    safe_window_value = float(window_value) if window_value not in (None, "") else 5.0
+    return max(0.01, safe_window_value * unit_scale)
+
+
+def _selected_sensors(source_df: pd.DataFrame, checklist_values, checklist_ids, active_groups) -> List[str]:
+    selected: List[str] = []
+    for _, values in zip(checklist_ids or [], checklist_values or []):
+        selected.extend(values or [])
+
+    if not selected:
+        for sensors in infer_available_sensors(source_df).values():
+            selected.extend(sensors)
+
+    filtered_selected: List[str] = []
+    for group, sensors in ALL_SENSOR_GROUPS.items():
+        if group in active_groups:
+            filtered_selected.extend([s for s in sensors if s in selected and s in source_df.columns])
+    return filtered_selected
+
+
+def _graph_signature(source_df: pd.DataFrame, filtered_selected: List[str], active_groups, window_minutes: float, pin_idx) -> str:
+    available = infer_available_sensors(source_df)
+    visible_groups = [group for group in ALL_SENSOR_GROUPS.keys() if group in set(active_groups or []) and group in available]
+    payload = {
+        "has_data": not source_df.empty,
+        "groups": visible_groups,
+        "sensors": filtered_selected,
+        "window_minutes": round(window_minutes, 6),
+        "pin_idx": int(pin_idx) if pin_idx is not None else None,
+    }
+    return json.dumps(payload, sort_keys=True)
 
 
 def register_callbacks(app: Dash) -> None:
@@ -102,50 +137,161 @@ def register_callbacks(app: Dash) -> None:
         return dash.no_update
 
     @app.callback(
+        Output("zoom-state-store", "data"),
+        Input("main-graph", "relayoutData"),
+        Input("window-value", "value"),
+        Input("window-unit", "value"),
+        State("zoom-state-store", "data"),
+        prevent_initial_call=True,
+    )
+    def track_zoom_state(relayout_data, window_value, window_unit, zoom_state):
+        triggered = callback_context.triggered[0]["prop_id"] if callback_context.triggered else ""
+
+        if triggered.startswith("window-value") or triggered.startswith("window-unit"):
+            return {"locked": False, "xrange": None}
+
+        if not relayout_data:
+            return dash.no_update
+
+        if relayout_data.get("xaxis.autorange"):
+            return {"locked": False, "xrange": None}
+
+        x0 = relayout_data.get("xaxis.range[0]")
+        x1 = relayout_data.get("xaxis.range[1]")
+
+        if x0 is not None and x1 is not None:
+            return {"locked": True, "xrange": [float(x0), float(x1)]}
+
+        return dash.no_update
+
+    @app.callback(
         Output("main-graph", "figure"),
+        Output("main-graph", "extendData"),
         Output("metrics-table", "data"),
+        Output("graph-state-store", "data"),
         Input("data-store", "data"),
         Input("pin-index-store", "data"),
         Input({"type": "sensor-checklist", "group": ALL}, "value"),
-        Input("view-mode-toggle", "value"),
+        Input("window-value", "value"),
+        Input("window-unit", "value"),
         Input("graph-toggle", "value"),
+        Input("zoom-state-store", "data"),
         State({"type": "sensor-checklist", "group": ALL}, "id"),
+        State("graph-state-store", "data"),
     )
-    def update_figure_and_metrics(data_json, pin_idx, checklist_values, view_mode_value, graph_toggle_value, checklist_ids):
+    def update_graph_and_metrics(
+        data_json,
+        pin_idx,
+        checklist_values,
+        window_value,
+        window_unit,
+        graph_toggle_value,
+        zoom_state,
+        checklist_ids,
+        graph_state,
+    ):
         source_df = read_df(data_json)
-
-        selected: List[str] = []
-        for _, values in zip(checklist_ids or [], checklist_values or []):
-            selected.extend(values or [])
-        if not selected:
-            for sensors in infer_available_sensors(source_df).values():
-                selected.extend(sensors)
-
         active_groups = set(graph_toggle_value or [])
-        filtered_selected: List[str] = []
-        for group, sensors in ALL_SENSOR_GROUPS.items():
-            if group in active_groups:
-                filtered_selected.extend([s for s in sensors if s in selected])
+        filtered_selected = _selected_sensors(source_df, checklist_values, checklist_ids, active_groups)
+        table_data = metric_table(source_df, filtered_selected, pin_idx)
+        window_minutes = _safe_window_minutes(window_value, window_unit)
+        signature = _graph_signature(source_df, filtered_selected, active_groups, window_minutes, pin_idx)
 
-        use_sliding_window = "sliding" in (view_mode_value or [])
-        fig = build_figure(
-            source_df,
-            filtered_selected,
-            use_sliding_window=use_sliding_window,
-            active_groups=active_groups,
+        state = graph_state or {}
+        state_signature = state.get("signature")
+        state_last_time = state.get("last_time")
+        initialized = bool(state.get("initialized"))
+
+        triggered_props = {item["prop_id"] for item in callback_context.triggered} if callback_context.triggered else set()
+        window_changed = any(
+            prop.startswith("window-value") or prop.startswith("window-unit")
+            for prop in triggered_props
         )
 
-        if not source_df.empty and pin_idx is not None and 0 <= int(pin_idx) < len(source_df):
-            pin_time = float(source_df.iloc[int(pin_idx)]["time_min"])
-            available = infer_available_sensors(source_df)
-            visible_groups = [group for group in ALL_SENSOR_GROUPS.keys() if group in active_groups and group in available]
-            group_to_row = {group: idx + 1 for idx, group in enumerate(visible_groups)}
-            for group in visible_groups:
-                row = group_to_row[group]
-                fig.add_vline(x=pin_time, line_width=1.5, line_dash="solid", line_color="#f59e0b", row=row, col=1)
+        zoom_locked = bool((zoom_state or {}).get("locked"))
+        locked_range = (zoom_state or {}).get("xrange")
 
-        table_data = metric_table(source_df, [s for s in filtered_selected if s in source_df.columns], pin_idx)
-        return fig, table_data
+        if window_changed:
+            zoom_locked = False
+            locked_range = None
+
+        active_x_range = locked_range if zoom_locked and locked_range else None
+
+        if source_df.empty:
+            fig = build_figure(
+                source_df,
+                filtered_selected,
+                window_minutes=window_minutes,
+                active_groups=active_groups,
+                pin_time=None,
+                x_range=active_x_range,
+            )
+            new_state = {"initialized": True, "signature": signature, "last_time": None}
+            return fig, dash.no_update, table_data, new_state
+
+        current_last_time = float(source_df.iloc[-1]["time_min"])
+        pin_time = None
+        if pin_idx is not None and 0 <= int(pin_idx) < len(source_df):
+            pin_time = float(source_df.iloc[int(pin_idx)]["time_min"])
+
+        data_only_trigger = triggered_props and all(prop.startswith("data-store") for prop in triggered_props)
+
+        needs_full_redraw = (
+            not initialized
+            or state_signature != signature
+            or state_last_time is None
+            or not data_only_trigger
+        )
+
+        if needs_full_redraw:
+            fig = build_figure(
+                source_df,
+                filtered_selected,
+                window_minutes=window_minutes,
+                active_groups=active_groups,
+                pin_time=pin_time,
+                x_range=active_x_range,
+            )
+            new_state = {"initialized": True, "signature": signature, "last_time": current_last_time}
+            return fig, dash.no_update, table_data, new_state
+
+        fresh = source_df[source_df["time_min"] > float(state_last_time)].copy()
+        if fresh.empty:
+            return dash.no_update, dash.no_update, table_data, dash.no_update
+
+        trace_indices = list(range(len(filtered_selected)))
+        if not trace_indices:
+            new_state = {"initialized": True, "signature": signature, "last_time": current_last_time}
+            return dash.no_update, dash.no_update, table_data, new_state
+
+        x_updates = [fresh["time_min"].tolist() for _ in filtered_selected]
+        y_updates = [fresh[sensor].tolist() if sensor in fresh.columns else [] for sensor in filtered_selected]
+
+        window_start = max(float(source_df["time_min"].min()), current_last_time - window_minutes)
+
+        if zoom_locked and locked_range:
+            x_range = [float(locked_range[0]), float(locked_range[1])]
+            left_edge = min(x_range)
+            right_edge = max(x_range)
+            visible_points = int(((source_df["time_min"] >= left_edge) & (source_df["time_min"] <= right_edge)).sum())
+        else:
+            x_range = [window_start, current_last_time]
+            visible_points = int((source_df["time_min"] >= window_start).sum())
+
+        max_points = max(visible_points, len(fresh), 1)
+
+        extend_payload = ({"x": x_updates, "y": y_updates}, trace_indices, max_points)
+
+        figure_patch = Patch()
+        available = infer_available_sensors(source_df)
+        visible_groups = [group for group in ALL_SENSOR_GROUPS.keys() if group in active_groups and group in available]
+        for idx in range(len(visible_groups)):
+            axis_name = "xaxis" if idx == 0 else f"xaxis{idx + 1}"
+            figure_patch["layout"][axis_name]["range"] = x_range
+            figure_patch["layout"][axis_name]["autorange"] = False
+
+        new_state = {"initialized": True, "signature": signature, "last_time": current_last_time}
+        return figure_patch, extend_payload, table_data, new_state
 
     @app.callback(
         Output("download-data", "data"),
@@ -154,17 +300,24 @@ def register_callbacks(app: Dash) -> None:
         State("save-format", "value"),
         State("save-scope", "value"),
         State("data-store", "data"),
+        State("window-value", "value"),
+        State("window-unit", "value"),
         prevent_initial_call=True,
     )
-    def save_data(n_clicks, save_format, save_scope, data_json):
+    def save_data(n_clicks, save_format, save_scope, data_json, window_value, window_unit):
         df = read_df(data_json)
         if df.empty:
             return dash.no_update, "No streamed data to save yet."
 
         use_visible_only = "visible" in (save_scope or [])
         export_df = df.copy()
-        scope_label = "visible" if use_visible_only else "full"
+        if use_visible_only and not export_df.empty:
+            window_minutes = _safe_window_minutes(window_value, window_unit)
+            window_end = float(export_df.iloc[-1]["time_min"])
+            window_start = max(float(export_df["time_min"].min()), window_end - window_minutes)
+            export_df = export_df[export_df["time_min"] >= window_start].copy()
 
+        scope_label = "visible" if use_visible_only else "full"
         export_format = (save_format or "csv").lower()
         content_bytes, _ = export_data_bytes(export_df, export_format)
         filename = f"cryo_{scope_label}_data.{export_format}"

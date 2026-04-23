@@ -11,25 +11,28 @@ from plotly.subplots import make_subplots
 from config import (
     ALL_SENSOR_GROUPS,
     DEFAULT_COLORS,
-    DEFAULT_SLIDING_WINDOW_MIN,
-    FLOW_SENSORS,
+    DEFAULT_WINDOW_UNIT,
+    DEFAULT_WINDOW_VALUE,
     GROUP_LABELS,
     POLL_INTERVAL_MS,
-    PRESSURE_SENSORS,
-    SLIDING_WINDOW_ROWS,
     STREAM_SOURCE_FILE,
-    TEMPERATURE_SENSORS,
-    TRANSFER_SENSORS,
 )
 from data import df_to_json, empty_frame, infer_available_sensors, load_notes
+
+
+def _visible_groups(df: pd.DataFrame, active_groups: Optional[Set[str]]) -> List[str]:
+    available = infer_available_sensors(df)
+    active = set(ALL_SENSOR_GROUPS.keys()) if active_groups is None else set(active_groups)
+    return [group for group in ALL_SENSOR_GROUPS.keys() if group in active and group in available]
 
 
 def build_figure(
     df: pd.DataFrame,
     sensor_selection: List[str],
-    use_sliding_window: bool = False,
-    sliding_window_min: float = DEFAULT_SLIDING_WINDOW_MIN,
+    window_minutes: float = DEFAULT_WINDOW_VALUE,
     active_groups: Optional[Set[str]] = None,
+    pin_time: Optional[float] = None,
+    x_range: Optional[List[float]] = None,
 ) -> go.Figure:
     if df.empty:
         fig = go.Figure()
@@ -52,14 +55,12 @@ def build_figure(
             ],
             xaxis={"visible": False},
             yaxis={"visible": False},
-            uirevision="live-graph",
         )
         return fig
 
     selection_set = set(sensor_selection)
     available = infer_available_sensors(df)
-    active_groups = set(ALL_SENSOR_GROUPS.keys()) if active_groups is None else set(active_groups)
-    visible_groups = [group for group in ALL_SENSOR_GROUPS.keys() if group in active_groups and group in available]
+    visible_groups = _visible_groups(df, active_groups)
 
     if not visible_groups:
         fig = go.Figure()
@@ -82,7 +83,6 @@ def build_figure(
             ],
             xaxis={"visible": False},
             yaxis={"visible": False},
-            uirevision="live-graph",
         )
         return fig
 
@@ -99,20 +99,22 @@ def build_figure(
     current_time = float(df.iloc[-1]["time_min"])
     x_min = float(df["time_min"].min())
 
-    if use_sliding_window:
-        visible = df.tail(SLIDING_WINDOW_ROWS).copy()
+    window_minutes = max(float(window_minutes), 1e-6)
+    window_end = current_time
+    window_start = max(x_min, window_end - window_minutes)
 
-        if len(visible) >= 2:
-            window_start = float(visible.iloc[0]["time_min"])
-            window_end = float(visible.iloc[-1]["time_min"])
-        else:
-            window_end = current_time
-            window_start = max(x_min, window_end - sliding_window_min)
-
-        x_range = [window_start, window_end]
+    if x_range is not None:
+        left_edge = min(float(x_range[0]), float(x_range[1]))
+        right_edge = max(float(x_range[0]), float(x_range[1]))
+        visible = df[(df["time_min"] >= left_edge) & (df["time_min"] <= right_edge)].copy()
+        if visible.empty:
+            visible = df.tail(1).copy()
+        final_x_range = [left_edge, right_edge]
     else:
-        visible = df.copy()
-        x_range = None
+        visible = df[df["time_min"] >= window_start].copy()
+        if visible.empty:
+            visible = df.tail(1).copy()
+        final_x_range = [window_start, window_end]
 
     time = visible["time_min"]
 
@@ -137,10 +139,6 @@ def build_figure(
                 col=1,
             )
 
-    for group in visible_groups:
-        row = group_to_row[group]
-        fig.add_vline(x=current_time, line_width=1.5, line_dash="solid", line_color="#111827", row=row, col=1)
-
     figure_height = max(380 * len(visible_groups), 420)
     fig.update_layout(
         height=figure_height,
@@ -157,15 +155,18 @@ def build_figure(
         showgrid=True,
         gridcolor="rgba(0,0,0,0.10)",
         fixedrange=False,
-        autorange=not use_sliding_window,
+        autorange=False,
+        range=final_x_range,
     )
-    if x_range is not None:
-        fig.update_xaxes(range=x_range)
     fig.update_yaxes(showgrid=True, gridcolor="rgba(0,0,0,0.10)", autorange=True, fixedrange=False)
 
     for group in visible_groups:
         row = group_to_row[group]
         fig.update_yaxes(title_text=GROUP_LABELS[group], row=row, col=1)
+
+    if pin_time is not None:
+        for row in group_to_row.values():
+            fig.add_vline(x=pin_time, line_width=1.5, line_dash="solid", line_color="#f59e0b", row=row, col=1)
 
     return fig
 
@@ -242,6 +243,8 @@ def create_layout() -> html.Div:
             dcc.Store(id="data-store", data=df_to_json(empty_frame())),
             dcc.Store(id="pin-index-store", data=None, storage_type="local"),
             dcc.Store(id="last-seen-time-store", data=None),
+            dcc.Store(id="graph-state-store", data={"initialized": False, "signature": None, "last_time": None}),
+            dcc.Store(id="zoom-state-store", data={"locked": False, "xrange": None}),
             dcc.Store(id="notes-store", data=load_notes(), storage_type="local"),
             dcc.Interval(id="stream-interval", interval=POLL_INTERVAL_MS, n_intervals=0, disabled=False),
             dcc.Download(id="download-data"),
@@ -279,15 +282,29 @@ def create_layout() -> html.Div:
                             html.Div(className="divider"),
                             html.Div("STREAM", className="panel-header"),
                             html.Div(f"Polling file: {STREAM_SOURCE_FILE.name}", className="save-status"),
-                            dcc.Checklist(
-                                id="view-mode-toggle",
-                                options=[{"label": "Use sliding window", "value": "sliding"}],
-                                value=[],
-                                inputStyle={"margin-right": "8px"},
-                                labelStyle={"display": "block", "fontSize": "13px", "margin": "4px 0 6px 0"},
+                            html.Label("Window size"),
+                            dcc.Input(
+                                id="window-value",
+                                type="number",
+                                min=0.5,
+                                step=0.5,
+                                value=DEFAULT_WINDOW_VALUE,
+                                className="text-input",
                                 persistence=True,
                                 persistence_type="local",
                             ),
+                            dcc.Dropdown(
+                                id="window-unit",
+                                options=[
+                                    {"label": "Minutes", "value": "min"},
+                                    {"label": "Hours", "value": "hr"},
+                                ],
+                                value=DEFAULT_WINDOW_UNIT,
+                                clearable=False,
+                                persistence=True,
+                                persistence_type="local",
+                            ),
+                            html.Div("Graph always shows the latest window.", className="save-status"),
                             html.Div(className="divider"),
                             html.Div("TOGGLE GRAPHS", className="panel-header"),
                             dcc.Checklist(
@@ -314,6 +331,7 @@ def create_layout() -> html.Div:
                         [
                             dcc.Graph(
                                 id="main-graph",
+                                figure=build_figure(empty_frame(), [], window_minutes=DEFAULT_WINDOW_VALUE),
                                 config={"displaylogo": False, "scrollZoom": True},
                                 style={"height": "100%"},
                             )
