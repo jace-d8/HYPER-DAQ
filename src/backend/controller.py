@@ -6,12 +6,6 @@ from src.drivers.Lakeshore218 import SerialTemperatureSensor
 from src.drivers.Lakeshore336 import TemperatureSensor
 from src.drivers.Alicat import Alicat
 
-# try:
-#     from src.drivers.niDaq import NiDaqAnalogInput, NiDaqChannelConfig
-# except Exception:
-#     NiDaqAnalogInput = None
-#     NiDaqChannelConfig = None
-
 
 class SensorControllerAsync:
     def __init__(self, csv_buffer, sample_hz=1):
@@ -27,30 +21,18 @@ class SensorControllerAsync:
 
     async def _init_sensors(self):
         sensors_specifications = [
-            ("Temperature", lambda: TemperatureSensor(name="TS1", channel="A")),
-            ("Temperature", lambda: SerialTemperatureSensor(name="TS2")),
+            ("Temperature", lambda: TemperatureSensor(
+                name="LS336_1",
+                channels={
+                    "TS1": "A",
+                    # "TS2": "B",
+                    # "TS3": "D2",
+                    # "TS4": "D3",
+                    # "TS5": "D4",
+                }
+            )),
             ("Mass Flow Rate", lambda: Alicat(name="Total Flow")),
         ]
-
-        # if NiDaqAnalogInput is not None and NiDaqChannelConfig is not None:
-        #     sensors_specifications.append(
-        #         (
-        #             "Pressure",
-        #             lambda: NiDaqAnalogInput(
-        #                 NiDaqChannelConfig(
-        #                     name="PT1",
-        #                     physical_channel="Dev1/ai0",
-        #                     measurement_type="voltage",
-        #                     min_val=0.0,
-        #                     max_val=5.0,
-        #                     terminal_config="RSE",
-        #                     sample_hz=1000,
-        #                     samples_per_read=50,
-        #                     reduction="mean",
-        #                 )
-        #             ),
-        #         )
-        #     )
 
         available = {}
 
@@ -66,7 +48,12 @@ class SensorControllerAsync:
 
                 sensor.failed = False
                 self.sensors.append(sensor)
-                available.setdefault(group_name, []).append(sensor.name)
+
+                if hasattr(sensor, "channels"):
+                    available.setdefault(group_name, []).extend(sensor.channels.keys())
+                else:
+                    available.setdefault(group_name, []).append(sensor.name)
+
                 logging.info(f"{sensor.name} initialized")
 
             except Exception as e:
@@ -104,12 +91,20 @@ class SensorControllerAsync:
 
             timestamp = datetime.now().isoformat(timespec="milliseconds")
 
-            self.latest_readings[sensor.name] = {
-                "timestamp": timestamp,
-                "value": payload,
-            }
+            if isinstance(payload, dict):
+                for name, value in payload.items():
+                    self.latest_readings[name] = {
+                        "timestamp": timestamp,
+                        "value": value,
+                    }
+                    self.csv_buffer.update_sensor(name, timestamp, value)
+            else:
+                self.latest_readings[sensor.name] = {
+                    "timestamp": timestamp,
+                    "value": payload,
+                }
+                self.csv_buffer.update_sensor(sensor.name, timestamp, payload)
 
-            self.csv_buffer.update_sensor(sensor.name, timestamp, payload)
             return sensor.name, payload
 
         except Exception as e:

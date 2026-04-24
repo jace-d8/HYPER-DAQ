@@ -2,18 +2,24 @@ import asyncio
 from lakeshore import Model336
 from src.drivers.sensor_base import SensorBase
 
-
-class TemperatureSensor(SensorBase):  # First 3 lines "standard"
-    def __init__(self, name="336_temp", channel="A"):
+class TemperatureSensor(SensorBase):
+    def __init__(self, name="336_1", channels=None):
         super().__init__(name)
-        self.channel = channel
+
+        if not channels:
+            raise ValueError("TemperatureSensor requires a non-empty channels dict")
+
+        self.channels = channels
         self.instrument = Model336()
 
     async def read(self):
-        return await asyncio.to_thread(  # run a thread (separate program) so we don't get blocking
-            self.instrument.get_kelvin_reading,  # function
-            self.channel  # argument
-        )
+        readings = {}
 
+        for sensor_name, channel in self.channels.items():
+            value = await asyncio.to_thread(
+                self.instrument.get_kelvin_reading,
+                channel
+            )
+            readings[sensor_name] = value
 
-    # If close is sought: self.instrument.disconnect_usb()
+        return readings

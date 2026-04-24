@@ -1,6 +1,6 @@
 from pathlib import Path
 
-APP_TITLE = "Cryogenic Data Frontend"
+APP_TITLE = "HYPER-DAQ"
 
 PRESSURE_SENSORS = [f"PT{i}" for i in range(1, 8)]
 TEMPERATURE_SENSORS = [f"TS{i}" for i in range(1, 7)] + ["T_sat PT2", "T_sat PT4"]
@@ -47,7 +47,7 @@ DEFAULT_WINDOW_UNIT = "min"
 WINDOW_UNIT_TO_MINUTES = {"min": 1.0, "hr": 60.0}
 AUTOSCALE_MAX_ROWS = 120_000
 NOTES_FILE = Path("notes_log.json")
-STREAM_SOURCE_FILE = Path("../backend/test_stream.csv")
+STREAM_SOURCE_FILE = Path("../backend/sensor_buffer.csv")
 
 INLINE_CSS = """
 body {
