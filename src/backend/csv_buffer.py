@@ -8,6 +8,7 @@ class CsvBuffer:
         self.data_csv = data_csv
         self.buffer_csv = buffer_csv
         self.max_rows = max_rows
+        self.logging_enabled = False
 
         self._lock = Lock()
         self._rows = []
@@ -42,7 +43,12 @@ class CsvBuffer:
         with self._lock:
             normalized_row = {col: row.get(col, "") for col in self._columns}
 
-            self._append_data_row(normalized_row)
+            # only write to full log when enabled
+            if self.logging_enabled:
+                self._append_data_row(normalized_row)
+
+            # always write to buffer for UI
+
             self._append_buffer_row(normalized_row)
 
             self._rows.append(normalized_row)
@@ -96,3 +102,6 @@ class CsvBuffer:
                 self._rows = list(reader)[-self.max_rows:]
         except Exception:
             self._rows = []
+    def set_logging_enabled(self, enabled):
+        with self._lock:
+            self.logging_enabled = bool(enabled)

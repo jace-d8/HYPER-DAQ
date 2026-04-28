@@ -5,7 +5,7 @@ from typing import List
 
 import dash
 import pandas as pd
-from dash import ALL, Dash, Input, Output, Patch, State, callback_context, dcc
+from dash import ALL, Dash, Input, Output, Patch, State, callback_context, dcc, html
 
 from config import ALL_SENSOR_GROUPS, APP_TITLE, AUTOSCALE_MAX_ROWS, INLINE_CSS, WINDOW_UNIT_TO_MINUTES
 from data import (
@@ -18,8 +18,8 @@ from data import (
     read_df,
     save_notes,
 )
-from ui import build_figure, create_layout, metric_table, render_notes_log, sensor_checklist_block
-
+from ui import build_figure, build_single_group_figure, create_layout, custom_sensor_options_by_group, metric_table, render_notes_log, sensor_checklist_block
+import requests
 
 def _safe_window_minutes(window_value, window_unit) -> float:
     unit_scale = WINDOW_UNIT_TO_MINUTES.get(window_unit or "min", 1.0)
@@ -43,7 +43,7 @@ def _selected_sensors(source_df: pd.DataFrame, checklist_values, checklist_ids, 
     return filtered_selected
 
 
-def _graph_signature(source_df: pd.DataFrame, filtered_selected: List[str], active_groups, window_minutes: float, pin_idx) -> str:
+def _graph_signature(source_df: pd.DataFrame, filtered_selected: List[str], active_groups, window_minutes: float, pin_idx, dark_mode: bool, custom_graphs=None) -> str:
     available = infer_available_sensors(source_df)
     visible_groups = [group for group in ALL_SENSOR_GROUPS.keys() if group in set(active_groups or []) and group in available]
     payload = {
@@ -52,8 +52,32 @@ def _graph_signature(source_df: pd.DataFrame, filtered_selected: List[str], acti
         "sensors": filtered_selected,
         "window_minutes": round(window_minutes, 6),
         "pin_idx": int(pin_idx) if pin_idx is not None else None,
+        "dark_mode": bool(dark_mode),
+        "custom_graphs": custom_graphs or [],
     }
     return json.dumps(payload, sort_keys=True)
+
+
+def _append_system_note(notes_data, text: str):
+    notes = list(notes_data or [])
+    timestamp = pd.Timestamp.now().strftime("%Y-%m-%d %H:%M:%S")
+    notes.append({"timestamp": timestamp, "text": text})
+    save_notes(notes)
+    return notes
+
+
+def _available_group_options(source_df: pd.DataFrame) -> List[dict]:
+    available = infer_available_sensors(source_df)
+    return [{'label': group, 'value': group} for group in available.keys()]
+
+
+def _valid_sensors_for_group(source_df: pd.DataFrame, group_name: str) -> List[str]:
+    available = infer_available_sensors(source_df)
+    return list(available.get(group_name, []))
+
+
+def _custom_graph_title(group_name: str, sensors: List[str]) -> str:
+    return f"{group_name}: {', '.join(sensors)}"
 
 
 def register_callbacks(app: Dash) -> None:
@@ -70,10 +94,7 @@ def register_callbacks(app: Dash) -> None:
         if not text:
             return dash.no_update, dash.no_update
 
-        notes = list(notes_data or [])
-        timestamp = pd.Timestamp.now().strftime("%Y-%m-%d %H:%M:%S")
-        notes.append({"timestamp": timestamp, "text": text})
-        save_notes(notes)
+        notes = _append_system_note(notes_data, text)
         return notes, ""
 
     @app.callback(
@@ -82,6 +103,69 @@ def register_callbacks(app: Dash) -> None:
     )
     def update_notes_log(notes_data):
         return render_notes_log(notes_data or [])
+    @app.callback(
+        Output("logging-state-store", "data"),
+        Output("notes-store", "data", allow_duplicate=True),
+        Input("logging-toggle-btn", "n_clicks"),
+        State("logging-state-store", "data"),
+        State("notes-store", "data"),
+        prevent_initial_call=True,
+    )
+    def toggle_logging(n_clicks, logging_state, notes_data):
+        current_enabled = bool((logging_state or {}).get("enabled"))
+        next_enabled = not current_enabled
+
+        next_state = {"enabled": next_enabled, "flash": next_enabled}
+
+        try:
+            requests.post(
+                "http://127.0.0.1:8000/logging",
+                json={"enabled": next_enabled},
+                timeout=0.25,
+            )
+            note_text = "Logging started from dashboard toggle." if next_enabled else "Logging stopped from dashboard toggle."
+        except requests.RequestException:
+            note_text = (
+                "Logging button changed locally, but backend is not running."
+            )
+
+        notes = _append_system_note(notes_data, note_text)
+        return next_state, notes
+
+    @app.callback(
+        Output("app-root", "className"),
+        Output("logging-banner", "children"),
+        Output("logging-banner", "className"),
+        Output("logging-toggle-btn", "children"),
+        Output("logging-toggle-btn", "className"),
+        Output("logging-mode-text", "children"),
+        Input("logging-state-store", "data"),
+    )
+    def sync_logging_ui(logging_state):
+        enabled = bool((logging_state or {}).get("enabled"))
+        flash = bool((logging_state or {}).get("flash"))
+        root_class = "dark-mode" if enabled else "light-mode"
+        if enabled and flash:
+            root_class += " flash-start"
+
+        if enabled:
+            return (
+                root_class,
+                "LOGGING ACTIVE, VISUALS SHIFTED TO RECORDING MODE",
+                "app-banner banner-on",
+                "Logging ON",
+                "logging-toggle-btn toggle-on",
+                "Logging is enabled. Dark mode marks active recording state.",
+            )
+
+        return (
+            root_class,
+            "TEST MODE, LOGGING OFF",
+            "app-banner banner-off",
+            "Logging OFF",
+            "logging-toggle-btn toggle-off",
+            "Logging is disabled. Flip the toggle before a real run.",
+        )
 
     @app.callback(
         Output("data-store", "data"),
@@ -116,6 +200,134 @@ def register_callbacks(app: Dash) -> None:
         available = infer_available_sensors(df)
         sensor_blocks = [sensor_checklist_block(group_name, sensors) for group_name, sensors in available.items()]
         return sensor_blocks
+
+    @app.callback(
+        Output("custom-graph-group", "options"),
+        Output("custom-graph-group", "value"),
+        Input("data-store", "data"),
+        State("custom-graph-group", "value"),
+    )
+    def refresh_custom_graph_groups(data_json, current_group):
+        df = read_df(data_json)
+        options = _available_group_options(df)
+        valid_values = {option["value"] for option in options}
+        if current_group in valid_values:
+            return options, current_group
+        next_value = options[0]["value"] if options else None
+        return options, next_value
+
+    @app.callback(
+        Output("custom-graph-sensors", "options"),
+        Output("custom-graph-sensors", "value"),
+        Input("custom-graph-group", "value"),
+        Input("data-store", "data"),
+        State("custom-graph-sensors", "value"),
+    )
+    def refresh_custom_graph_sensor_options(group_name, data_json, current_sensors):
+        df = read_df(data_json)
+        sensors = _valid_sensors_for_group(df, group_name)
+        options = [{'label': sensor, 'value': sensor} for sensor in sensors]
+        selected = [sensor for sensor in (current_sensors or []) if sensor in sensors]
+        return options, selected
+
+    @app.callback(
+        Output("custom-graphs-store", "data"),
+        Input("add-custom-graph-btn", "n_clicks"),
+        Input({"type": "remove-custom-graph", "index": ALL}, "n_clicks"),
+        State("custom-graph-group", "value"),
+        State("custom-graph-sensors", "value"),
+        State("custom-graphs-store", "data"),
+        State("data-store", "data"),
+        prevent_initial_call=True,
+    )
+    def manage_custom_graphs(add_clicks, remove_clicks, group_name, selected_sensors, custom_graphs, data_json):
+        triggered = callback_context.triggered[0]["prop_id"] if callback_context.triggered else ""
+        graphs = list(custom_graphs or [])
+
+        if triggered.startswith("add-custom-graph-btn"):
+            df = read_df(data_json)
+            valid_sensors = set(_valid_sensors_for_group(df, group_name))
+            sensors = [sensor for sensor in (selected_sensors or []) if sensor in valid_sensors]
+            if not group_name or not sensors:
+                return dash.no_update
+            next_id = max([int(graph.get("id", 0)) for graph in graphs] or [0]) + 1
+            graphs.append({"id": next_id, "group": group_name, "sensors": sensors})
+            return graphs
+
+        if triggered.startswith("{"):
+            triggered_id = json.loads(triggered.split(".")[0])
+            if triggered_id.get("type") == "remove-custom-graph":
+                remove_id = int(triggered_id.get("index"))
+                # Dash fires this input once when a new remove button is inserted.
+                # Only remove the graph after the user actually clicks the button.
+                click_count = 0
+                for graph, clicks in zip(graphs, remove_clicks or []):
+                    if int(graph.get("id", -1)) == remove_id:
+                        click_count = int(clicks or 0)
+                        break
+                if click_count <= 0:
+                    return dash.no_update
+                return [graph for graph in graphs if int(graph.get("id", -1)) != remove_id]
+
+        return dash.no_update
+
+    @app.callback(
+        Output("custom-graphs-container", "children"),
+        Input("custom-graphs-store", "data"),
+        Input("data-store", "data"),
+        Input("pin-index-store", "data"),
+        Input("window-value", "value"),
+        Input("window-unit", "value"),
+        Input("zoom-state-store", "data"),
+        Input("logging-state-store", "data"),
+    )
+    def render_custom_graphs(custom_graphs, data_json, pin_idx, window_value, window_unit, zoom_state, logging_state):
+        df = read_df(data_json)
+        window_minutes = _safe_window_minutes(window_value, window_unit)
+        dark_mode = bool((logging_state or {}).get("enabled"))
+        locked_range = (zoom_state or {}).get("xrange")
+        x_range = locked_range if bool((zoom_state or {}).get("locked")) and locked_range else None
+
+        pin_time = None
+        if pin_idx is not None and not df.empty and 0 <= int(pin_idx) < len(df):
+            pin_time = float(df.iloc[int(pin_idx)]["time_min"])
+
+        cards = []
+        for graph in custom_graphs or []:
+            graph_id = int(graph.get("id", 0))
+            group_name = graph.get("group")
+            sensors = list(graph.get("sensors", []))
+            title = _custom_graph_title(group_name, sensors)
+            fig = build_single_group_figure(
+                df,
+                group_name,
+                sensors,
+                window_minutes=window_minutes,
+                pin_time=pin_time,
+                x_range=x_range,
+                dark_mode=dark_mode,
+                title=title,
+            )
+            cards.append(
+                html.Div(
+                    [
+                        html.Button(
+                            "×",
+                            id={"type": "remove-custom-graph", "index": graph_id},
+                            n_clicks=0,
+                            title="Remove graph",
+                            className="custom-remove-btn",
+                        ),
+                        dcc.Graph(
+                            id={"type": "custom-graph", "index": graph_id},
+                            figure=fig,
+                            config={"displaylogo": False, "scrollZoom": True},
+                        ),
+                    ],
+                    className="custom-graph-card",
+                )
+            )
+        return cards
 
     @app.callback(
         Output("pin-index-store", "data"),
@@ -176,6 +388,8 @@ def register_callbacks(app: Dash) -> None:
         Input("window-unit", "value"),
         Input("graph-toggle", "value"),
         Input("zoom-state-store", "data"),
+        Input("logging-state-store", "data"),
+        Input("custom-graphs-store", "data"),
         State({"type": "sensor-checklist", "group": ALL}, "id"),
         State("graph-state-store", "data"),
     )
@@ -187,6 +401,8 @@ def register_callbacks(app: Dash) -> None:
         window_unit,
         graph_toggle_value,
         zoom_state,
+        logging_state,
+        custom_graphs,
         checklist_ids,
         graph_state,
     ):
@@ -195,7 +411,9 @@ def register_callbacks(app: Dash) -> None:
         filtered_selected = _selected_sensors(source_df, checklist_values, checklist_ids, active_groups)
         table_data = metric_table(source_df, filtered_selected, pin_idx)
         window_minutes = _safe_window_minutes(window_value, window_unit)
-        signature = _graph_signature(source_df, filtered_selected, active_groups, window_minutes, pin_idx)
+        dark_mode = bool((logging_state or {}).get("enabled"))
+        # Custom graphs render below the main graph, so they should not add extra subplot rows here.
+        signature = _graph_signature(source_df, filtered_selected, active_groups, window_minutes, pin_idx, dark_mode, [])
 
         state = graph_state or {}
         state_signature = state.get("signature")
@@ -225,6 +443,8 @@ def register_callbacks(app: Dash) -> None:
                 active_groups=active_groups,
                 pin_time=None,
                 x_range=active_x_range,
+                dark_mode=dark_mode,
+                custom_graphs=[],
             )
             new_state = {"initialized": True, "signature": signature, "last_time": None}
             return fig, dash.no_update, table_data, new_state
@@ -234,7 +454,7 @@ def register_callbacks(app: Dash) -> None:
         if pin_idx is not None and 0 <= int(pin_idx) < len(source_df):
             pin_time = float(source_df.iloc[int(pin_idx)]["time_min"])
 
-        data_only_trigger = triggered_props and all(prop.startswith("data-store") for prop in triggered_props)
+        data_only_trigger = triggered_props and all(prop.startswith("data-store") for prop in triggered_props) and not custom_graphs
 
         needs_full_redraw = (
             not initialized
@@ -251,6 +471,8 @@ def register_callbacks(app: Dash) -> None:
                 active_groups=active_groups,
                 pin_time=pin_time,
                 x_range=active_x_range,
+                dark_mode=dark_mode,
+                custom_graphs=[],
             )
             new_state = {"initialized": True, "signature": signature, "last_time": current_last_time}
             return fig, dash.no_update, table_data, new_state
@@ -279,7 +501,6 @@ def register_callbacks(app: Dash) -> None:
             visible_points = int((source_df["time_min"] >= window_start).sum())
 
         max_points = max(visible_points, len(fresh), 1)
-
         extend_payload = ({"x": x_updates, "y": y_updates}, trace_indices, max_points)
 
         figure_patch = Patch()

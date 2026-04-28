@@ -1,0 +1,478 @@
+[
+  {
+    "timestamp": "2026-04-03 15:13:56",
+    "text": "test 1: autoscale bugged, checks bugged, axis bugged. all else functional. \n\nNotes do not save on refresh. \nSettings do not save on refresh. \nData saves on refresh."
+  },
+  {
+    "timestamp": "2026-04-03 15:38:38",
+    "text": "test 2: save state now function. testing note refresh"
+  },
+  {
+    "timestamp": "2026-04-23 00:30:45",
+    "text": "Logging started from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 00:30:51",
+    "text": "Logging stopped from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 00:30:52",
+    "text": "Logging started from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 00:30:53",
+    "text": "Logging stopped from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 00:30:55",
+    "text": "Logging started from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 00:30:58",
+    "text": "Logging stopped from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 00:30:59",
+    "text": "Logging started from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 00:31:00",
+    "text": "Logging stopped from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 00:31:03",
+    "text": "Logging started from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 00:31:59",
+    "text": "Logging stopped from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 00:32:07",
+    "text": "Logging started from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 00:32:12",
+    "text": "Logging stopped from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 00:32:13",
+    "text": "Logging started from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 00:32:14",
+    "text": "Logging stopped from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 00:32:15",
+    "text": "Logging started from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 00:34:12",
+    "text": "Logging stopped from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 00:34:12",
+    "text": "Logging started from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 00:34:13",
+    "text": "Logging stopped from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 00:34:14",
+    "text": "Logging started from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 00:34:15",
+    "text": "Logging stopped from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 00:34:16",
+    "text": "Logging started from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 00:38:46",
+    "text": "Logging stopped from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 00:38:46",
+    "text": "Logging started from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 00:38:59",
+    "text": "Logging stopped from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 00:38:59",
+    "text": "Logging started from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 00:42:46",
+    "text": "Logging stopped from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 00:42:50",
+    "text": "Logging started from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 00:42:51",
+    "text": "Logging stopped from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 00:42:52",
+    "text": "Logging started from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 00:42:56",
+    "text": "Logging stopped from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 00:42:58",
+    "text": "Logging started from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 00:42:58",
+    "text": "Logging stopped from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 00:42:59",
+    "text": "Logging started from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 00:43:00",
+    "text": "Logging stopped from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 00:43:00",
+    "text": "Logging started from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 00:43:00",
+    "text": "Logging stopped from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 00:43:00",
+    "text": "Logging started from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 00:43:00",
+    "text": "Logging stopped from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 00:44:32",
+    "text": "Logging started from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 00:44:34",
+    "text": "Logging stopped from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 00:44:36",
+    "text": "Logging started from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 00:44:37",
+    "text": "Logging stopped from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 00:44:38",
+    "text": "Logging started from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 00:44:39",
+    "text": "Logging stopped from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 00:44:46",
+    "text": "Logging started from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 00:44:46",
+    "text": "Logging stopped from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 00:44:47",
+    "text": "Logging started from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 00:44:47",
+    "text": "Logging stopped from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 00:44:48",
+    "text": "Logging started from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 00:44:48",
+    "text": "Logging stopped from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 00:44:49",
+    "text": "Logging started from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 00:44:50",
+    "text": "Logging stopped from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 00:44:52",
+    "text": "Logging started from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 00:44:59",
+    "text": "Logging stopped from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 16:29:25",
+    "text": "Logging started from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 16:29:30",
+    "text": "Logging stopped from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 16:29:30",
+    "text": "Logging started from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 16:29:34",
+    "text": "Logging stopped from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 16:29:37",
+    "text": "Logging started from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 16:29:39",
+    "text": "Logging stopped from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 16:29:40",
+    "text": "Logging started from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 16:29:42",
+    "text": "Logging stopped from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 16:29:46",
+    "text": "Logging started from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 16:30:18",
+    "text": "Logging stopped from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 16:30:32",
+    "text": "Logging started from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 16:38:50",
+    "text": "Logging stopped from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 17:31:57",
+    "text": "Logging started from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-23 17:32:01",
+    "text": "Logging stopped from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-24 14:48:56",
+    "text": "Logging started from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-24 14:48:56",
+    "text": "Logging stopped from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-24 14:48:57",
+    "text": "Logging started from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-24 14:48:57",
+    "text": "Logging stopped from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-28 11:33:20",
+    "text": "Logging started from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-28 11:33:21",
+    "text": "Logging stopped from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-28 11:33:21",
+    "text": "Logging started from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-28 11:33:22",
+    "text": "Logging stopped from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-28 11:33:25",
+    "text": "Logging started from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-28 11:33:27",
+    "text": "Logging stopped from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-28 11:33:27",
+    "text": "Logging started from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-28 11:33:40",
+    "text": "Logging stopped from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-28 11:33:52",
+    "text": "Logging started from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-28 11:55:56",
+    "text": "Failed to update backend logging state: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /logging (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "timestamp": "2026-04-28 11:55:56",
+    "text": "Failed to update backend logging state: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /logging (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "timestamp": "2026-04-28 11:55:57",
+    "text": "Failed to update backend logging state: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /logging (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "timestamp": "2026-04-28 11:56:02",
+    "text": "Failed to update backend logging state: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /logging (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "timestamp": "2026-04-28 11:56:02",
+    "text": "Failed to update backend logging state: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /logging (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "timestamp": "2026-04-28 11:56:03",
+    "text": "Failed to update backend logging state: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /logging (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "timestamp": "2026-04-28 11:56:03",
+    "text": "Failed to update backend logging state: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /logging (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "timestamp": "2026-04-28 11:56:04",
+    "text": "Failed to update backend logging state: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /logging (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "timestamp": "2026-04-28 11:56:04",
+    "text": "Failed to update backend logging state: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /logging (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "timestamp": "2026-04-28 11:58:58",
+    "text": "Logging button changed locally, but backend is not running."
+  },
+  {
+    "timestamp": "2026-04-28 11:58:59",
+    "text": "Logging button changed locally, but backend is not running."
+  },
+  {
+    "timestamp": "2026-04-28 11:59:00",
+    "text": "Logging button changed locally, but backend is not running."
+  },
+  {
+    "timestamp": "2026-04-28 11:59:00",
+    "text": "Logging button changed locally, but backend is not running."
+  },
+  {
+    "timestamp": "2026-04-28 11:59:01",
+    "text": "Logging button changed locally, but backend is not running."
+  },
+  {
+    "timestamp": "2026-04-28 11:59:01",
+    "text": "Logging button changed locally, but backend is not running."
+  },
+  {
+    "timestamp": "2026-04-28 11:59:02",
+    "text": "Logging button changed locally, but backend is not running."
+  },
+  {
+    "timestamp": "2026-04-28 11:59:02",
+    "text": "Logging button changed locally, but backend is not running."
+  },
+  {
+    "timestamp": "2026-04-28 11:59:03",
+    "text": "Logging button changed locally, but backend is not running."
+  },
+  {
+    "timestamp": "2026-04-28 11:59:03",
+    "text": "Logging button changed locally, but backend is not running."
+  },
+  {
+    "timestamp": "2026-04-28 11:59:04",
+    "text": "Logging button changed locally, but backend is not running."
+  },
+  {
+    "timestamp": "2026-04-28 11:59:05",
+    "text": "Logging button changed locally, but backend is not running."
+  },
+  {
+    "timestamp": "2026-04-28 11:59:06",
+    "text": "Logging button changed locally, but backend is not running."
+  },
+  {
+    "timestamp": "2026-04-28 11:59:08",
+    "text": "Logging button changed locally, but backend is not running."
+  },
+  {
+    "timestamp": "2026-04-28 12:08:06",
+    "text": "Logging stopped from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-28 12:08:06",
+    "text": "Logging started from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-28 12:08:06",
+    "text": "Logging stopped from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-28 12:08:07",
+    "text": "Logging started from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-28 12:08:07",
+    "text": "Logging stopped from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-28 12:08:07",
+    "text": "Logging started from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-28 12:08:07",
+    "text": "Logging stopped from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-28 12:08:07",
+    "text": "Logging started from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-28 12:08:07",
+    "text": "Logging stopped from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-28 12:08:07",
+    "text": "Logging started from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-28 12:08:08",
+    "text": "Logging stopped from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-28 12:10:46",
+    "text": "Logging started from dashboard toggle."
+  },
+  {
+    "timestamp": "2026-04-28 12:10:52",
+    "text": "Logging stopped from dashboard toggle."
+  }
+]

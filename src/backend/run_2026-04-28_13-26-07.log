@@ -1,0 +1,869 @@
+2026-04-28 13:26:07,907 - INFO - Sent query to None: *IDN?
+2026-04-28 13:26:07,907 - INFO - Received response from None: LSCI,MODEL336,336AA5X/#######,2.8
+2026-04-28 13:26:07,907 - INFO - LS336_1 initialized
+2026-04-28 13:26:07,908 - ERROR - Mass Flow Rate sensor failed to initialize: [Errno 2] could not open port /dev/ttyUSB0: [Errno 2] No such file or directory: '/dev/ttyUSB0'
+2026-04-28 13:26:07,915 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:07,915 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:08,015 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:08,016 - INFO - Received response from 336AA5X: +295.237;000
+2026-04-28 13:26:08,117 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:08,117 - INFO - Received response from 336AA5X: +295.237;000
+2026-04-28 13:26:08,218 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:08,218 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:08,319 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:08,319 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:08,420 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:08,420 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:08,521 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:08,521 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:08,622 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:08,622 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:08,722 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:08,723 - INFO - Received response from 336AA5X: +295.235;000
+2026-04-28 13:26:08,824 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:08,824 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:08,924 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:08,926 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:09,026 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:09,026 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:09,127 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:09,127 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:09,228 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:09,228 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:09,329 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:09,329 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:09,429 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:09,429 - INFO - Received response from 336AA5X: +295.228;000
+2026-04-28 13:26:09,530 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:09,530 - INFO - Received response from 336AA5X: +295.237;000
+2026-04-28 13:26:09,631 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:09,632 - INFO - Received response from 336AA5X: +295.235;000
+2026-04-28 13:26:09,732 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:09,732 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:09,833 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:09,834 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:09,935 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:09,935 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:10,036 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:10,036 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:10,136 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:10,137 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:10,237 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:10,237 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:10,338 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:10,338 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:10,440 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:10,440 - INFO - Received response from 336AA5X: +295.235;000
+2026-04-28 13:26:10,539 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:10,540 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:10,640 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:10,640 - INFO - Received response from 336AA5X: +295.227;000
+2026-04-28 13:26:10,742 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:10,742 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:10,842 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:10,843 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:10,944 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:10,945 - INFO - Received response from 336AA5X: +295.235;000
+2026-04-28 13:26:11,045 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:11,045 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:11,146 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:11,146 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:11,246 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:11,246 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:11,348 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:11,348 - INFO - Received response from 336AA5X: +295.235;000
+2026-04-28 13:26:11,448 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:11,448 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:11,554 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:11,554 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:11,650 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:11,650 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:11,752 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:11,752 - INFO - Received response from 336AA5X: +295.235;000
+2026-04-28 13:26:11,853 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:11,853 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:11,954 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:11,954 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:12,055 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:12,055 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:12,156 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:12,156 - INFO - Received response from 336AA5X: +295.235;000
+2026-04-28 13:26:12,257 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:12,257 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:12,358 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:12,358 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:12,460 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:12,460 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:12,560 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:12,561 - INFO - Received response from 336AA5X: +295.227;000
+2026-04-28 13:26:12,662 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:12,662 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:12,761 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:12,762 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:12,863 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:12,863 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:12,964 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:12,964 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:13,065 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:13,065 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:13,167 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:13,167 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:13,267 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:13,267 - INFO - Received response from 336AA5X: +295.228;000
+2026-04-28 13:26:13,368 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:13,369 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:13,469 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:13,469 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:13,570 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:13,570 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:13,670 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:13,671 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:13,772 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:13,772 - INFO - Received response from 336AA5X: +295.228;000
+2026-04-28 13:26:13,873 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:13,873 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:13,974 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:13,974 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:14,074 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:14,074 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:14,175 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:14,175 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:14,276 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:14,276 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:14,377 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:14,377 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:14,477 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:14,477 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:14,579 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:14,579 - INFO - Received response from 336AA5X: +295.237;000
+2026-04-28 13:26:14,679 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:14,679 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:14,780 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:14,781 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:14,881 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:14,881 - INFO - Received response from 336AA5X: +295.235;000
+2026-04-28 13:26:14,982 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:14,982 - INFO - Received response from 336AA5X: +295.238;000
+2026-04-28 13:26:15,084 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:15,084 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:15,185 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:15,185 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:15,286 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:15,286 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:15,387 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:15,387 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:15,488 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:15,488 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:15,589 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:15,589 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:15,689 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:15,689 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:15,790 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:15,790 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:15,892 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:15,892 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:16,003 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:16,003 - INFO - Received response from 336AA5X: +295.227;000
+2026-04-28 13:26:16,104 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:16,104 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:16,203 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:16,203 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:16,304 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:16,304 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:16,403 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:16,403 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:16,504 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:16,504 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:16,603 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:16,603 - INFO - Received response from 336AA5X: +295.235;000
+2026-04-28 13:26:16,704 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:16,704 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:16,813 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:16,813 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:16,913 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:16,913 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:17,014 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:17,014 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:17,115 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:17,115 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:17,216 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:17,217 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:17,317 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:17,317 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:17,417 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:17,417 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:17,518 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:17,518 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:17,619 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:17,619 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:17,721 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:17,721 - INFO - Received response from 336AA5X: +295.235;000
+2026-04-28 13:26:17,822 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:17,822 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:17,922 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:17,922 - INFO - Received response from 336AA5X: +295.237;000
+2026-04-28 13:26:18,022 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:18,022 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:18,123 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:18,124 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:18,224 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:18,225 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:18,326 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:18,326 - INFO - Received response from 336AA5X: +295.235;000
+2026-04-28 13:26:18,429 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:18,429 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:18,529 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:18,529 - INFO - Received response from 336AA5X: +295.235;000
+2026-04-28 13:26:18,630 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:18,630 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:18,731 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:18,731 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:18,832 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:18,832 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:18,933 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:18,933 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:19,033 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:19,034 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:19,134 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:19,135 - INFO - Received response from 336AA5X: +295.235;000
+2026-04-28 13:26:19,235 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:19,235 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:19,336 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:19,336 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:19,437 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:19,437 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:19,538 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:19,538 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:19,639 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:19,640 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:19,740 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:19,740 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:19,841 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:19,841 - INFO - Received response from 336AA5X: +295.235;000
+2026-04-28 13:26:19,942 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:19,942 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:20,047 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:20,047 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:20,148 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:20,148 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:20,249 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:20,249 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:20,350 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:20,350 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:20,451 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:20,451 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:20,552 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:20,552 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:20,653 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:20,653 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:20,754 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:20,755 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:20,856 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:20,856 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:20,957 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:20,957 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:21,058 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:21,058 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:21,158 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:21,158 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:21,260 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:21,260 - INFO - Received response from 336AA5X: +295.235;000
+2026-04-28 13:26:21,361 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:21,362 - INFO - Received response from 336AA5X: +295.235;000
+2026-04-28 13:26:21,462 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:21,462 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:21,563 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:21,563 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:21,663 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:21,663 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:21,764 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:21,764 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:21,865 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:21,865 - INFO - Received response from 336AA5X: +295.237;000
+2026-04-28 13:26:21,965 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:21,965 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:22,065 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:22,065 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:22,166 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:22,166 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:22,268 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:22,268 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:22,369 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:22,370 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:22,470 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:22,470 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:22,570 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:22,570 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:22,670 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:22,670 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:22,772 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:22,772 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:22,872 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:22,873 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:22,973 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:22,973 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:23,074 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:23,074 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:23,175 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:23,176 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:23,276 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:23,276 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:23,377 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:23,377 - INFO - Received response from 336AA5X: +295.235;000
+2026-04-28 13:26:23,478 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:23,479 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:23,580 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:23,580 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:23,681 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:23,681 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:23,781 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:23,781 - INFO - Received response from 336AA5X: +295.228;000
+2026-04-28 13:26:23,882 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:23,882 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:23,983 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:23,983 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:24,083 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:24,083 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:24,185 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:24,185 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:24,286 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:24,286 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:24,387 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:24,387 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:24,487 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:24,488 - INFO - Received response from 336AA5X: +295.235;000
+2026-04-28 13:26:24,588 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:24,588 - INFO - Received response from 336AA5X: +295.235;000
+2026-04-28 13:26:24,688 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:24,689 - INFO - Received response from 336AA5X: +295.235;000
+2026-04-28 13:26:24,790 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:24,791 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:24,891 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:24,892 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:25,004 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:25,004 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:25,105 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:25,105 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:25,205 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:25,205 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:25,305 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:25,305 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:25,404 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:25,404 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:25,504 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:25,505 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:25,604 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:25,604 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:25,705 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:25,705 - INFO - Received response from 336AA5X: +295.235;000
+2026-04-28 13:26:25,804 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:25,804 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:25,904 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:25,905 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:26,004 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:26,004 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:26,105 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:26,105 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:26,204 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:26,204 - INFO - Received response from 336AA5X: +295.235;000
+2026-04-28 13:26:26,306 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:26,306 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:26,407 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:26,407 - INFO - Received response from 336AA5X: +295.227;000
+2026-04-28 13:26:26,507 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:26,508 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:26,609 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:26,609 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:26,709 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:26,709 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:26,811 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:26,811 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:26,912 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:26,912 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:27,013 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:27,013 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:27,114 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:27,114 - INFO - Received response from 336AA5X: +295.237;000
+2026-04-28 13:26:27,215 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:27,216 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:27,316 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:27,316 - INFO - Received response from 336AA5X: +295.235;000
+2026-04-28 13:26:27,416 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:27,417 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:27,516 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:27,516 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:27,617 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:27,618 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:27,718 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:27,718 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:27,818 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:27,818 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:27,919 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:27,919 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:28,020 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:28,021 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:28,122 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:28,122 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:28,222 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:28,223 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:28,323 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:28,324 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:28,424 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:28,424 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:28,525 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:28,525 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:28,625 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:28,625 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:28,727 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:28,727 - INFO - Received response from 336AA5X: +295.228;000
+2026-04-28 13:26:28,828 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:28,828 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:28,929 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:28,930 - INFO - Received response from 336AA5X: +295.235;000
+2026-04-28 13:26:29,031 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:29,031 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:29,132 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:29,132 - INFO - Received response from 336AA5X: +295.235;000
+2026-04-28 13:26:29,233 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:29,234 - INFO - Received response from 336AA5X: +295.228;000
+2026-04-28 13:26:29,334 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:29,334 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:29,435 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:29,435 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:29,537 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:29,537 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:29,637 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:29,637 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:29,738 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:29,738 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:29,838 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:29,839 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:29,939 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:29,940 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:30,041 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:30,041 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:30,141 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:30,141 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:30,241 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:30,242 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:30,342 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:30,343 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:30,444 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:30,444 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:30,544 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:30,544 - INFO - Received response from 336AA5X: +295.235;000
+2026-04-28 13:26:30,645 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:30,645 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:30,746 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:30,746 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:30,848 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:30,848 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:30,949 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:30,949 - INFO - Received response from 336AA5X: +295.237;000
+2026-04-28 13:26:31,049 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:31,049 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:31,151 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:31,151 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:31,252 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:31,252 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:31,352 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:31,352 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:31,452 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:31,452 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:31,553 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:31,553 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:31,653 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:31,653 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:31,754 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:31,754 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:31,855 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:31,856 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:31,956 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:31,956 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:32,057 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:32,057 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:32,158 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:32,158 - INFO - Received response from 336AA5X: +295.235;000
+2026-04-28 13:26:32,259 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:32,260 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:32,360 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:32,360 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:32,461 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:32,462 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:32,562 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:32,562 - INFO - Received response from 336AA5X: +295.235;000
+2026-04-28 13:26:32,663 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:32,663 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:32,764 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:32,764 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:32,866 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:32,866 - INFO - Received response from 336AA5X: +295.227;000
+2026-04-28 13:26:32,967 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:32,967 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:33,068 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:33,068 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:33,169 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:33,169 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:33,270 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:33,270 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:33,370 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:33,370 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:33,471 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:33,472 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:33,571 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:33,572 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:33,673 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:33,673 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:33,774 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:33,774 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:33,875 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:33,875 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:33,976 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:33,976 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:34,077 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:34,077 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:34,178 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:34,178 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:34,279 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:34,279 - INFO - Received response from 336AA5X: +295.227;000
+2026-04-28 13:26:34,380 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:34,380 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:34,480 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:34,481 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:34,581 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:34,581 - INFO - Received response from 336AA5X: +295.235;000
+2026-04-28 13:26:34,682 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:34,682 - INFO - Received response from 336AA5X: +295.228;000
+2026-04-28 13:26:34,783 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:34,783 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:34,884 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:34,884 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:34,985 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:34,986 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:35,087 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:35,087 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:35,188 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:35,188 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:35,288 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:35,289 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:35,389 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:35,389 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:35,489 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:35,489 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:35,590 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:35,590 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:35,691 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:35,691 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:35,791 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:35,792 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:35,892 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:35,893 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:35,993 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:35,993 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:36,105 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:36,105 - INFO - Received response from 336AA5X: +295.237;000
+2026-04-28 13:26:36,204 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:36,205 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:36,305 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:36,305 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:36,404 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:36,405 - INFO - Received response from 336AA5X: +295.228;000
+2026-04-28 13:26:36,505 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:36,506 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:36,605 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:36,605 - INFO - Received response from 336AA5X: +295.227;000
+2026-04-28 13:26:36,705 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:36,705 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:36,804 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:36,805 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:36,905 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:36,905 - INFO - Received response from 336AA5X: +295.228;000
+2026-04-28 13:26:37,004 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:37,005 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:37,105 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:37,105 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:37,204 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:37,205 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:37,305 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:37,305 - INFO - Received response from 336AA5X: +295.235;000
+2026-04-28 13:26:37,405 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:37,405 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:37,507 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:37,507 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:37,608 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:37,608 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:37,711 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:37,711 - INFO - Received response from 336AA5X: +295.238;000
+2026-04-28 13:26:37,813 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:37,814 - INFO - Received response from 336AA5X: +295.228;000
+2026-04-28 13:26:37,914 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:37,915 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:38,016 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:38,016 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:38,117 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:38,118 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:38,219 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:38,219 - INFO - Received response from 336AA5X: +295.228;000
+2026-04-28 13:26:38,321 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:38,321 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:38,422 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:38,422 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:38,524 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:38,525 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:38,625 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:38,625 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:38,726 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:38,726 - INFO - Received response from 336AA5X: +295.237;000
+2026-04-28 13:26:38,827 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:38,828 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:38,929 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:38,929 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:39,030 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:39,031 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:39,131 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:39,131 - INFO - Received response from 336AA5X: +295.235;000
+2026-04-28 13:26:39,232 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:39,232 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:39,334 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:39,335 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:39,434 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:39,434 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:39,535 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:39,535 - INFO - Received response from 336AA5X: +295.225;000
+2026-04-28 13:26:39,637 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:39,637 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:39,738 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:39,738 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:39,840 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:39,840 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:39,941 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:39,941 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:40,043 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:40,043 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:40,144 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:40,144 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:40,245 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:40,245 - INFO - Received response from 336AA5X: +295.235;000
+2026-04-28 13:26:40,349 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:40,350 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:40,452 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:40,452 - INFO - Received response from 336AA5X: +295.228;000
+2026-04-28 13:26:40,552 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:40,553 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:40,653 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:40,654 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:40,755 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:40,755 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:40,857 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:40,858 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:40,960 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:40,960 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:41,062 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:41,062 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:41,163 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:41,164 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:41,265 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:41,265 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:41,367 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:41,368 - INFO - Received response from 336AA5X: +295.227;000
+2026-04-28 13:26:41,469 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:41,469 - INFO - Received response from 336AA5X: +295.235;000
+2026-04-28 13:26:41,570 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:41,571 - INFO - Received response from 336AA5X: +295.235;000
+2026-04-28 13:26:41,672 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:41,673 - INFO - Received response from 336AA5X: +295.227;000
+2026-04-28 13:26:41,774 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:41,774 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:41,876 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:41,876 - INFO - Received response from 336AA5X: +295.228;000
+2026-04-28 13:26:41,976 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:41,976 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:42,078 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:42,078 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:42,179 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:42,179 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:42,281 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:42,281 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:42,384 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:42,384 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:42,485 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:42,485 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:42,586 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:42,587 - INFO - Received response from 336AA5X: +295.235;000
+2026-04-28 13:26:42,688 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:42,688 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:42,788 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:42,788 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:42,891 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:42,891 - INFO - Received response from 336AA5X: +295.235;000
+2026-04-28 13:26:42,992 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:42,992 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:43,106 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:43,106 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:43,205 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:43,205 - INFO - Received response from 336AA5X: +295.235;000
+2026-04-28 13:26:43,305 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:43,305 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:43,405 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:43,405 - INFO - Received response from 336AA5X: +295.235;000
+2026-04-28 13:26:43,505 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:43,505 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:43,605 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:43,605 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:43,706 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:43,706 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:43,805 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:43,805 - INFO - Received response from 336AA5X: +295.228;000
+2026-04-28 13:26:43,905 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:43,906 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:44,007 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:44,007 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:44,109 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:44,109 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:44,211 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:44,211 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:44,313 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:44,313 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:44,414 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:44,414 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:44,516 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:44,516 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:44,616 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:44,616 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:44,717 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:44,718 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:44,820 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:44,820 - INFO - Received response from 336AA5X: +295.227;000
+2026-04-28 13:26:44,921 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:44,921 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:45,024 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:45,025 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:45,125 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:45,126 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:45,226 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:45,226 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:45,328 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:45,329 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:45,430 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:45,431 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:45,533 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:45,533 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:45,634 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:45,634 - INFO - Received response from 336AA5X: +295.235;000
+2026-04-28 13:26:45,735 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:45,735 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:45,837 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:45,837 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:45,939 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:45,940 - INFO - Received response from 336AA5X: +295.228;000
+2026-04-28 13:26:46,041 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:46,041 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:46,143 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:46,143 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:46,247 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:46,247 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:46,349 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:46,350 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:46,456 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:46,456 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:46,556 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:46,556 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:46,657 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:46,657 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:46,759 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:46,759 - INFO - Received response from 336AA5X: +295.235;000
+2026-04-28 13:26:46,860 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:46,860 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:46,965 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:46,966 - INFO - Received response from 336AA5X: +295.228;000
+2026-04-28 13:26:47,066 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:47,066 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:47,167 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:47,167 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:47,269 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:47,269 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:47,370 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:47,370 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:47,475 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:47,475 - INFO - Received response from 336AA5X: +295.235;000
+2026-04-28 13:26:47,575 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:47,575 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:47,677 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:47,677 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:47,778 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:47,778 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:47,880 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:47,880 - INFO - Received response from 336AA5X: +295.235;000
+2026-04-28 13:26:47,981 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:47,981 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:48,082 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:48,083 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:48,184 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:48,184 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:48,285 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:48,285 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:48,387 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:48,388 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:48,488 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:48,489 - INFO - Received response from 336AA5X: +295.235;000
+2026-04-28 13:26:48,590 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:48,590 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:48,691 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:48,691 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:48,793 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:48,793 - INFO - Received response from 336AA5X: +295.235;000
+2026-04-28 13:26:48,906 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:48,906 - INFO - Received response from 336AA5X: +295.237;000
+2026-04-28 13:26:49,005 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:49,005 - INFO - Received response from 336AA5X: +295.235;000
+2026-04-28 13:26:49,105 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:49,106 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:49,205 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:49,205 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:49,306 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:49,306 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:49,405 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:49,405 - INFO - Received response from 336AA5X: +295.235;000
+2026-04-28 13:26:49,506 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:49,506 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:49,605 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:49,605 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:49,706 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:49,706 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:49,808 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:49,808 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:49,909 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:49,910 - INFO - Received response from 336AA5X: +295.235;000
+2026-04-28 13:26:50,010 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:50,010 - INFO - Received response from 336AA5X: +295.237;000
+2026-04-28 13:26:50,110 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:50,111 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:50,211 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:50,212 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:50,313 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:50,313 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:50,427 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:50,427 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:50,515 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:50,515 - INFO - Received response from 336AA5X: +295.229;000
+2026-04-28 13:26:50,616 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:50,616 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:50,717 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:50,717 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:50,819 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:50,819 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:50,937 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:50,937 - INFO - Received response from 336AA5X: +295.235;000
+2026-04-28 13:26:51,022 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:51,022 - INFO - Received response from 336AA5X: +295.233;000
+2026-04-28 13:26:51,124 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:51,124 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:51,225 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:51,225 - INFO - Received response from 336AA5X: +295.231;000
+2026-04-28 13:26:51,327 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:51,327 - INFO - Received response from 336AA5X: +295.234;000
+2026-04-28 13:26:51,429 - INFO - LS336_1 loop cancelled
+2026-04-28 13:26:51,429 - INFO - Snapshot loop cancelled
+2026-04-28 13:26:51,430 - INFO - Sensor controller run cancelled
+2026-04-28 13:26:51,439 - INFO - Sent query to 336AA5X: KRDG? A;*ESR?
+2026-04-28 13:26:51,439 - INFO - Received response from 336AA5X: +295.234;000
