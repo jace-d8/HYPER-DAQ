@@ -1,14 +1,13 @@
 import asyncio
 import logging
 from datetime import datetime
-
-import uvicorn
-from fastapi import FastAPI
-from pydantic import BaseModel
+from pathlib import Path
 
 from controller import SensorControllerAsync
 from csv_buffer import CsvBuffer
+from src.frontend.config import BUFFER_MAX_ROWS, SAMPLE_HZ
 
+DATA_DIR = Path(__file__).parent.parent.parent / "data"
 
 log_filename = f"run_{datetime.now():%Y-%m-%d_%H-%M-%S}.log"
 
@@ -19,41 +18,28 @@ logging.basicConfig(
 )
 
 
-class LoggingRequest(BaseModel):
-    enabled: bool
+async def main():
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
 
+    csv_buffer = CsvBuffer(
+        data_csv="sensor_data.csv",
+        buffer_csv="sensor_buffer.csv",
+        max_rows=BUFFER_MAX_ROWS,
+        data_dir=DATA_DIR,
+        logging_state_file=DATA_DIR / "logging_state.json",
+    )
 
-app = FastAPI()
+    controller = SensorControllerAsync(
+        csv_buffer=csv_buffer,
+        sample_hz=SAMPLE_HZ,
+    )
 
-csv_buffer = CsvBuffer(
-    data_csv="sensor_data.csv",
-    buffer_csv="sensor_buffer.csv",
-    max_rows=5000,
-)
-
-controller = SensorControllerAsync(
-    csv_buffer=csv_buffer,
-    sample_hz=10,
-)
-
-
-@app.post("/logging")
-async def set_logging_state(request: LoggingRequest):
-    controller.set_logging_enabled(request.enabled)
-    return {"enabled": request.enabled}
-
-
-async def run_controller():
     try:
         await controller.run()
     finally:
-        await controller.shutdown()
-
-
-@app.on_event("startup")
-async def startup():
-    asyncio.create_task(run_controller())
+        await controller.close()
+        csv_buffer.close()
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+    asyncio.run(main())

@@ -5,7 +5,6 @@ from datetime import datetime
 from src.drivers.Lakeshore218 import SerialTemperatureSensor
 from src.drivers.Lakeshore336 import TemperatureSensor
 from src.drivers.Alicat import Alicat
-#from src.drivers import NiDaqAnalogInput, NiDaqChannelConfig
 
 
 class SensorControllerAsync:
@@ -34,23 +33,6 @@ class SensorControllerAsync:
             )),
             ("Mass Flow Rate", lambda: Alicat(name="Total Flow")),
         ]
-
-        # if NiAnalogInput is not None and NiDaqChannelConfig is not None:
-        #     sensors_specifications.append(
-        #         "Pressure",
-        #         NiDaqChannelConfig(
-        #             name="PT1",
-        #             physical_channel="cDAQ3Mod2/ai0",
-        #             measurement_type="thermocouple",
-        #             min_val=-100.0,
-        #             max_val=400,
-        #             terminal_config="DIFF",
-        #             thermocouple_type="K",
-        #             sample_hz=1000,
-        #             samples_per_read=500,
-        #             reduction="mean",
-        #         )
-        #     )
 
         available = {}
 
@@ -87,9 +69,6 @@ class SensorControllerAsync:
                         logging.error(f"Failed to close partially initialized sensor: {close_err}")
 
         self.csv_buffer.set_available_sensors(available)
-
-    def set_logging_enabled(self, enabled):
-        self.csv_buffer.set_logging_enabled(enabled)
 
     async def read_one(self, sensor):
         try:
@@ -163,14 +142,12 @@ class SensorControllerAsync:
             while not self._stop_event.is_set():
                 elapsed_seconds = asyncio.get_running_loop().time() - self.start_loop_time
 
-                row = {
-                    "time_min": elapsed_seconds / 60.0,
-                }
+                row = {"time_min": elapsed_seconds / 60.0}
 
                 for sensor_name, payload in self.latest_readings.items():
                     row[sensor_name] = payload["value"]
 
-                self.csv_buffer.append_snapshot(row)
+                self.csv_buffer.append_snapshot(row)  # no window_minutes
 
                 try:
                     await asyncio.wait_for(self._stop_event.wait(), timeout=self.period)
@@ -180,6 +157,7 @@ class SensorControllerAsync:
         except asyncio.CancelledError:
             logging.info("Snapshot loop cancelled")
             raise
+
 
     async def run(self):
         await self._init_sensors()

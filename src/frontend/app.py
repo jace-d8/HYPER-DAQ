@@ -6,8 +6,9 @@ from typing import List
 import dash
 import pandas as pd
 from dash import ALL, Dash, Input, Output, Patch, State, callback_context, dcc, html
+from config import ALL_SENSOR_GROUPS, APP_TITLE, BUFFER_MAX_ROWS, INLINE_CSS, WINDOW_UNIT_TO_MINUTES, \
+    max_lookback_minutes, SAMPLE_HZ, LOGGING_STATE_FILE
 
-from config import ALL_SENSOR_GROUPS, APP_TITLE, AUTOSCALE_MAX_ROWS, INLINE_CSS, WINDOW_UNIT_TO_MINUTES
 from data import (
     append_new_stream_rows,
     df_to_json,
@@ -19,12 +20,13 @@ from data import (
     save_notes,
 )
 from ui import build_figure, build_single_group_figure, create_layout, custom_sensor_options_by_group, metric_table, render_notes_log, sensor_checklist_block
-import requests
+
 
 def _safe_window_minutes(window_value, window_unit) -> float:
     unit_scale = WINDOW_UNIT_TO_MINUTES.get(window_unit or "min", 1.0)
     safe_window_value = float(window_value) if window_value not in (None, "") else 5.0
-    return max(0.01, safe_window_value * unit_scale)
+    requested = max(0.01, safe_window_value * unit_scale)
+    return min(requested, max_lookback_minutes(SAMPLE_HZ))
 
 
 def _selected_sensors(source_df: pd.DataFrame, checklist_values, checklist_ids, active_groups) -> List[str]:
@@ -93,7 +95,6 @@ def register_callbacks(app: Dash) -> None:
         text = (note_text or "").strip()
         if not text:
             return dash.no_update, dash.no_update
-
         notes = _append_system_note(notes_data, text)
         return notes, ""
 
@@ -103,6 +104,7 @@ def register_callbacks(app: Dash) -> None:
     )
     def update_notes_log(notes_data):
         return render_notes_log(notes_data or [])
+
     @app.callback(
         Output("logging-state-store", "data"),
         Output("notes-store", "data", allow_duplicate=True),
@@ -114,22 +116,15 @@ def register_callbacks(app: Dash) -> None:
     def toggle_logging(n_clicks, logging_state, notes_data):
         current_enabled = bool((logging_state or {}).get("enabled"))
         next_enabled = not current_enabled
-
         next_state = {"enabled": next_enabled, "flash": next_enabled}
-
-        try:
-            requests.post(
-                "http://127.0.0.1:8000/logging",
-                json={"enabled": next_enabled},
-                timeout=0.25,
-            )
-            note_text = "Logging started from dashboard toggle." if next_enabled else "Logging stopped from dashboard toggle."
-        except requests.RequestException:
-            note_text = (
-                "Logging button changed locally, but backend is not running."
-            )
-
+        note_text = "Logging started from dashboard toggle." if next_enabled else "Logging stopped from dashboard toggle."
         notes = _append_system_note(notes_data, note_text)
+        try:
+            LOGGING_STATE_FILE.parent.mkdir(parents=True, exist_ok=True)
+            with open(LOGGING_STATE_FILE, "w") as f:
+                json.dump({"enabled": next_enabled}, f)
+        except Exception:
+            pass
         return next_state, notes
 
     @app.callback(
@@ -182,7 +177,7 @@ def register_callbacks(app: Dash) -> None:
             cached_df,
             source_df,
             last_seen_time,
-            max_rows=AUTOSCALE_MAX_ROWS,
+            max_rows=BUFFER_MAX_ROWS,
         )
 
         if updated_df.empty:
@@ -258,8 +253,6 @@ def register_callbacks(app: Dash) -> None:
             triggered_id = json.loads(triggered.split(".")[0])
             if triggered_id.get("type") == "remove-custom-graph":
                 remove_id = int(triggered_id.get("index"))
-                # Dash fires this input once when a new remove button is inserted.
-                # Only remove the graph after the user actually clicks the button.
                 click_count = 0
                 for graph, clicks in zip(graphs, remove_clicks or []):
                     if int(graph.get("id", -1)) == remove_id:
@@ -412,7 +405,6 @@ def register_callbacks(app: Dash) -> None:
         table_data = metric_table(source_df, filtered_selected, pin_idx)
         window_minutes = _safe_window_minutes(window_value, window_unit)
         dark_mode = bool((logging_state or {}).get("enabled"))
-        # Custom graphs render below the main graph, so they should not add extra subplot rows here.
         signature = _graph_signature(source_df, filtered_selected, active_groups, window_minutes, pin_idx, dark_mode, [])
 
         state = graph_state or {}
@@ -461,6 +453,7 @@ def register_callbacks(app: Dash) -> None:
             or state_signature != signature
             or state_last_time is None
             or not data_only_trigger
+            or window_changed  # any window change forces full redraw
         )
 
         if needs_full_redraw:
@@ -500,7 +493,7 @@ def register_callbacks(app: Dash) -> None:
             x_range = [window_start, current_last_time]
             visible_points = int((source_df["time_min"] >= window_start).sum())
 
-        max_points = max(visible_points, len(fresh), 1)
+        max_points = max(visible_points + len(fresh) + 1, 1)
         extend_payload = ({"x": x_updates, "y": y_updates}, trace_indices, max_points)
 
         figure_patch = Patch()

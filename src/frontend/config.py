@@ -21,6 +21,7 @@ GROUP_LABELS = {
     "H, Transferred": "Total H₂ Transferred [kg]",
 }
 
+
 DEFAULT_COLORS = {
     "PT1": "#e53935",
     "PT2": "#f9a825",
@@ -45,9 +46,15 @@ POLL_INTERVAL_MS = 120
 DEFAULT_WINDOW_VALUE = 5.0
 DEFAULT_WINDOW_UNIT = "min"
 WINDOW_UNIT_TO_MINUTES = {"min": 1.0, "hr": 60.0}
-AUTOSCALE_MAX_ROWS = 120_000
+BUFFER_MAX_ROWS = 10000
+SAMPLE_HZ = 15
 NOTES_FILE = Path("notes_log.json")
 STREAM_SOURCE_FILE = Path("../backend/sensor_buffer.csv")
+DATA_DIR = Path("../../data")
+LOGGING_STATE_FILE = DATA_DIR / "logging_state.json"
+
+def max_lookback_minutes(sample_hz: float) -> float:
+    return BUFFER_MAX_ROWS / (sample_hz * 60)
 
 INLINE_CSS = """
 body {

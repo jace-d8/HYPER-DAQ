@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Dict, List, Optional, Set
 
 import numpy as np
+from config import BUFFER_MAX_ROWS, SAMPLE_HZ, max_lookback_minutes
 import pandas as pd
 import plotly.graph_objects as go
 from dash import dash_table, dcc, html
@@ -439,7 +440,10 @@ def create_layout() -> html.Div:
                                 persistence=True,
                                 persistence_type='local',
                             ),
-                            html.Div('Graph always shows the latest window.', className='save-status'),
+                            html.Div(
+                                f'Graph always shows the latest window. Max at {SAMPLE_HZ} Hz: {max_lookback_minutes(SAMPLE_HZ):.1f} min ({max_lookback_minutes(SAMPLE_HZ) / 60:.2f} hr).',
+                                className='save-status',
+                            ),
                             html.Div(className='divider'),
                             html.Div('TOGGLE GRAPHS', className='panel-header'),
                             dcc.Checklist(
