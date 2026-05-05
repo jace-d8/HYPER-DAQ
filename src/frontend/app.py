@@ -107,25 +107,20 @@ def register_callbacks(app: Dash) -> None:
 
     @app.callback(
         Output("logging-state-store", "data"),
-        Output("notes-store", "data", allow_duplicate=True),
         Input("logging-toggle-btn", "n_clicks"),
         State("logging-state-store", "data"),
-        State("notes-store", "data"),
         prevent_initial_call=True,
     )
-    def toggle_logging(n_clicks, logging_state, notes_data):
+    def toggle_logging(n_clicks, logging_state):
         current_enabled = bool((logging_state or {}).get("enabled"))
         next_enabled = not current_enabled
-        next_state = {"enabled": next_enabled, "flash": next_enabled}
-        note_text = "Logging started from dashboard toggle." if next_enabled else "Logging stopped from dashboard toggle."
-        notes = _append_system_note(notes_data, note_text)
         try:
             LOGGING_STATE_FILE.parent.mkdir(parents=True, exist_ok=True)
             with open(LOGGING_STATE_FILE, "w") as f:
                 json.dump({"enabled": next_enabled}, f)
         except Exception:
             pass
-        return next_state, notes
+        return {"enabled": next_enabled, "flash": next_enabled}
 
     @app.callback(
         Output("app-root", "className"),
