@@ -108,13 +108,10 @@ class CsvBuffer:
             writer.writeheader()
 
     def _ensure_csv_headers(self):
-        # Always create a fresh timestamped data file on startup
         self._rotate_data_file()
-
-        if not os.path.exists(self.buffer_csv) or os.path.getsize(self.buffer_csv) == 0:
-            with open(self.buffer_csv, "w", newline="") as f:
-                writer = csv.DictWriter(f, fieldnames=self._columns)
-                writer.writeheader()
+        with open(self.buffer_csv, "w", newline="") as f:
+            writer = csv.DictWriter(f, fieldnames=self._columns)
+            writer.writeheader()
 
     def _append_data_row(self, row):
         if not self._is_logging_enabled():

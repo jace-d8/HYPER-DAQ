@@ -8,8 +8,10 @@ from csv_buffer import CsvBuffer
 from src.frontend.config import BUFFER_MAX_ROWS, SAMPLE_HZ
 
 DATA_DIR = Path(__file__).parent.parent.parent / "data"
+LOGS_DIR = Path(__file__).parent.parent.parent / "logs"
 
-log_filename = f"run_{datetime.now():%Y-%m-%d_%H-%M-%S}.log"
+LOGS_DIR.mkdir(parents=True, exist_ok=True)
+log_filename = LOGS_DIR / f"run_{datetime.now():%Y-%m-%d_%H-%M-%S}.log"
 
 logging.basicConfig(
     filename=log_filename,
