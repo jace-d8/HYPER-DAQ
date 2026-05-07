@@ -49,7 +49,7 @@ WINDOW_UNIT_TO_MINUTES = {"min": 1.0, "hr": 60.0}
 BUFFER_MAX_ROWS = 10000
 SAMPLE_HZ = 15
 NOTES_FILE = Path(__file__).parent / "notes_log.json"
-STREAM_SOURCE_FILE = Path(__file__).parent.parent / "backend" / "sensor_buffer.csv"
+STREAM_SOURCE_FILE = Path(__file__).parent.parent / "backend" / "test_stream.csv"
 DATA_DIR = Path(__file__).parent.parent.parent / "data"
 LOGGING_STATE_FILE = DATA_DIR / "logging_state.json"
 
