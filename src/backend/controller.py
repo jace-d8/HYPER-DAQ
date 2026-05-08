@@ -32,6 +32,14 @@ class SensorControllerAsync:
                 }
             )),
             ("Mass Flow Rate", lambda: Alicat(name="Total Flow")),
+            # ("Pressure", lambda: NiDaqTask(
+            #     name="NI_Pressure",
+            #     channels=[
+            #         NiDaqChannelConfig("PT1", "Dev1/ai0", measurement_type="voltage"),
+            #         NiDaqChannelConfig("PT2", "Dev1/ai1", measurement_type="voltage"),
+            #     ],
+            #     sample_hz=SAMPLE_HZ,
+            # ))
         ]
 
         available = {}
@@ -147,7 +155,7 @@ class SensorControllerAsync:
                 for sensor_name, payload in self.latest_readings.items():
                     row[sensor_name] = payload["value"]
 
-                self.csv_buffer.append_snapshot(row)  # no window_minutes
+                await asyncio.to_thread(self.csv_buffer.append_snapshot, row)
 
                 try:
                     await asyncio.wait_for(self._stop_event.wait(), timeout=self.period)
