@@ -1,5 +1,6 @@
 import asyncio
 import logging
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 
 from src.drivers.Lakeshore218 import SerialTemperatureSensor
@@ -18,6 +19,7 @@ class SensorControllerAsync:
         self.transferred_total_kg = 0.0
         self._tasks = []
         self._stop_event = asyncio.Event()
+        self._disk_executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix="snapshot_writer")
 
     async def _init_sensors(self):
         sensors_specifications = [
@@ -155,7 +157,8 @@ class SensorControllerAsync:
                 for sensor_name, payload in self.latest_readings.items():
                     row[sensor_name] = payload["value"]
 
-                await asyncio.to_thread(self.csv_buffer.append_snapshot, row)
+                loop = asyncio.get_running_loop()
+                await loop.run_in_executor(self._disk_executor, self.csv_buffer.append_snapshot, row)
 
                 try:
                     await asyncio.wait_for(self._stop_event.wait(), timeout=self.period)
@@ -208,6 +211,7 @@ class SensorControllerAsync:
         await self.close()
 
     async def close(self):
+        self._disk_executor.shutdown(wait=True)
         for sensor in self.sensors:
             try:
                 if hasattr(sensor, "close") and callable(sensor.close):
