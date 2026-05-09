@@ -494,6 +494,19 @@ class HyperDaqApp:
             return
         ct = float(df.iloc[-1]["time_min"])
         ws = ct - self._window_minutes
+
+        now_mono = time.monotonic()
+        prev_mono = getattr(self, "_dbg_prev_mono", None)
+        prev_ct = getattr(self, "_dbg_prev_ct", None)
+        if prev_mono is not None:
+            d_mono = now_mono - prev_mono
+            d_ct_s = (ct - prev_ct) * 60.0
+            if d_mono > 0.30 or d_ct_s > 0.30 or d_ct_s < 0.0:
+                qsize = self._update_q.qsize()
+                print(f"[plot] dmono={d_mono*1000:6.0f}ms  dct={d_ct_s*1000:+6.0f}ms  "
+                      f"ct={ct:.4f}min  rows={len(df)}  qsize={qsize}", flush=True)
+        self._dbg_prev_mono = now_mono
+        self._dbg_prev_ct = ct
         visible = df[df["time_min"] >= ws]
         if visible.empty:
             visible = df.tail(1)
