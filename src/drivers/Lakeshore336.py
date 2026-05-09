@@ -1,38 +1,26 @@
 import asyncio
-import serial
+from lakeshore import Model336
 from src.drivers.sensor_base import SensorBase
 
-
-class SerialTemperatureSensor(SensorBase):
-
-    def __init__(self, name="218_temp", port="/dev/tty.usbserial-FTDZA5QJ"):
+class TemperatureSensor(SensorBase):
+    def __init__(self, name="336_1", channels=None):
         super().__init__(name)
 
-        self.poll_hz = 2
-        self.ser = serial.Serial(
-            port,
-            baudrate=9600,
-            bytesize=serial.SEVENBITS,
-            parity=serial.PARITY_ODD,
-            stopbits=serial.STOPBITS_ONE,
-            timeout=1
-        )
-        self._lock = asyncio.Lock() # only send query at once
+        if not channels:
+            raise ValueError("TemperatureSensor requires a non-empty channels dict")
 
-    # blocking function (runs in thread)
-    def _query(self, cmd):
-        self.ser.write((cmd + '\r\n').encode('ascii'))
-        return self.ser.readline().decode('ascii', errors='ignore').strip()
-    # read bytes until newline (/n)
-    # convert bytes into str
-    # ignore errors (testing)
-    # remove newline
+        self.channels = channels
+        self.poll_hz = 10
+        self.instrument = Model336()
 
     async def read(self):
-        async with self._lock:
-            value = await asyncio.to_thread(self._query, "KRDG? 1")
-        return float(value)
+        readings = {}
 
-    async def disconnect(self):
-        if self.ser and self.ser.is_open:
-            await asyncio.to_thread(self.ser.close)
+        for sensor_name, channel in self.channels.items():
+            value = await asyncio.to_thread(
+                self.instrument.get_kelvin_reading,
+                channel
+            )
+            readings[sensor_name] = value
+
+        return readings
