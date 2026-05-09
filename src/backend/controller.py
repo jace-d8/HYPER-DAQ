@@ -1,6 +1,7 @@
 import asyncio
 import ctypes
 import logging
+import queue
 import sys
 import threading
 import time
@@ -85,16 +86,16 @@ class SensorThread(threading.Thread):
 
 class SnapshotThread(threading.Thread):
     """
-    Writes one row per tick using OS-level threading.Event timer.
-    Never shares resources with sensor threads — timing is consistent
-    regardless of how slow or fast individual sensors are.
+    Produces one timestamped row per tick and pushes it to row_queue.
+    Does no disk I/O — the WriterThread persists rows asynchronously,
+    so this thread's timing is decoupled from filesystem stalls.
     """
 
-    def __init__(self, shared_readings, readings_lock, csv_buffer, sample_hz, stop_event):
+    def __init__(self, shared_readings, readings_lock, row_queue, sample_hz, stop_event):
         super().__init__(daemon=True, name="snapshot")
         self.shared_readings = shared_readings
         self.readings_lock = readings_lock
-        self.csv_buffer = csv_buffer
+        self.row_queue = row_queue
         self.period = 1.0 / sample_hz
         self.stop_event = stop_event
 
@@ -111,35 +112,70 @@ class SnapshotThread(threading.Thread):
 
             with self.readings_lock:
                 readings = dict(self.shared_readings)
-            t_lock = time.monotonic()
 
             row = {"time_min": (t0 - start) / 60.0}
             row.update(readings)
 
-            try:
-                self.csv_buffer.log_row(row)
-            except Exception as e:
-                logging.error(f"Data log write failed: {e}")
-            t_log = time.monotonic()
+            self.row_queue.put(row)
+            t_done = time.monotonic()
 
-            try:
-                self.csv_buffer.buffer_row(row)
-            except Exception:
-                pass
-            t_buf = time.monotonic()
-
-            iter_ms = (t_buf - t0) * 1000.0
+            iter_ms = (t_done - t0) * 1000.0
             _dbg_count += 1
-            if cycle_ms > 150.0 or iter_ms > 100.0 or _dbg_count % 75 == 0:
-                lock_ms = (t_lock - t0) * 1000.0
-                log_ms = (t_log - t_lock) * 1000.0
-                buf_ms = (t_buf - t_log) * 1000.0
+            if cycle_ms > 150.0 or iter_ms > 20.0 or _dbg_count % 150 == 0:
                 wait_ms = max(0.0, cycle_ms - iter_ms)
+                qsize = self.row_queue.qsize()
                 print(f"[snap] cycle={cycle_ms:6.1f}ms  wait={wait_ms:6.1f}  "
-                      f"iter={iter_ms:5.1f}  lock={lock_ms:4.1f}  log={log_ms:4.1f}  "
-                      f"buf={buf_ms:5.1f}  n={_dbg_count}", flush=True)
+                      f"iter={iter_ms:5.2f}  qsize={qsize:3d}  n={_dbg_count}",
+                      flush=True)
 
             self.stop_event.wait(max(0.0, self.period - (time.monotonic() - t0)))
+
+
+class WriterThread(threading.Thread):
+    """
+    Drains row_queue and persists rows. Decoupled from snapshot timing —
+    if disk I/O stalls or this thread is descheduled, queued rows accumulate
+    and get flushed in a batch on resume; timestamps stay accurate.
+    """
+
+    def __init__(self, row_queue, csv_buffer, stop_event):
+        super().__init__(daemon=True, name="writer")
+        self.row_queue = row_queue
+        self.csv_buffer = csv_buffer
+        self.stop_event = stop_event
+
+    def run(self):
+        _dbg_count = 0
+        while not self.stop_event.is_set() or not self.row_queue.empty():
+            try:
+                first = self.row_queue.get(timeout=0.1)
+            except queue.Empty:
+                continue
+
+            batch = [first]
+            while True:
+                try:
+                    batch.append(self.row_queue.get_nowait())
+                except queue.Empty:
+                    break
+
+            t0 = time.monotonic()
+            for r in batch:
+                try:
+                    self.csv_buffer.log_row(r)
+                except Exception as e:
+                    logging.error(f"Data log write failed: {e}")
+                try:
+                    self.csv_buffer.buffer_row(r)
+                except Exception:
+                    pass
+            elapsed_ms = (time.monotonic() - t0) * 1000.0
+
+            _dbg_count += 1
+            if elapsed_ms > 50.0 or len(batch) > 3 or _dbg_count % 150 == 0:
+                qsize = self.row_queue.qsize()
+                print(f"[wri ] batch={len(batch):3d}  elapsed={elapsed_ms:6.1f}ms  "
+                      f"qsize_after={qsize:3d}  n={_dbg_count}", flush=True)
 
 
 class SensorControllerAsync:
@@ -151,6 +187,8 @@ class SensorControllerAsync:
         self._readings_lock = threading.Lock()
         self._sensor_threads: list[SensorThread] = []
         self._snapshot_thread: SnapshotThread | None = None
+        self._writer_thread: WriterThread | None = None
+        self._row_queue: queue.Queue = queue.Queue()
 
     def _on_reading(self, sensor_name: str, payload):
         with self._readings_lock:
@@ -225,9 +263,14 @@ class SensorControllerAsync:
             t.start()
             self._sensor_threads.append(t)
 
+        self._writer_thread = WriterThread(
+            self._row_queue, self.csv_buffer, self._stop_event,
+        )
+        self._writer_thread.start()
+
         self._snapshot_thread = SnapshotThread(
             self._shared_readings, self._readings_lock,
-            self.csv_buffer, self.sample_hz, self._stop_event,
+            self._row_queue, self.sample_hz, self._stop_event,
         )
         self._snapshot_thread.start()
 
@@ -246,6 +289,8 @@ class SensorControllerAsync:
             t.join(timeout=5.0)
         if self._snapshot_thread:
             self._snapshot_thread.join(timeout=5.0)
+        if self._writer_thread:
+            self._writer_thread.join(timeout=5.0)
 
         for t in self._sensor_threads:
             sensor = t.sensor
