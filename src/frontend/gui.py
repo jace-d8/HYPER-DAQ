@@ -655,7 +655,6 @@ class HyperDaqApp:
     # ------------------------------------------------------------------
 
     def _poll(self):
-        _last_mtime: float = 0.0
         _file_pos: int = 0
         _columns: list = []
 
@@ -666,13 +665,12 @@ class HyperDaqApp:
                     time.sleep(self._POLL_S)
                     continue
 
-                mtime = path.stat().st_mtime
-                if mtime == _last_mtime:
+                size = path.stat().st_size
+                if size == _file_pos:
                     time.sleep(self._POLL_S)
                     continue
-                _last_mtime = mtime
 
-                if path.stat().st_size < _file_pos:
+                if size < _file_pos:
                     # file was rewritten (buffer rotation) — reset
                     _file_pos = 0
                     _columns = []
