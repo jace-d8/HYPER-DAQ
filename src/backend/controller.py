@@ -75,8 +75,12 @@ class SnapshotThread(threading.Thread):
     def run(self):
         start = time.monotonic()
         _dbg_count = 0
+        _dbg_prev_t0 = None
         while not self.stop_event.is_set():
             t0 = time.monotonic()
+
+            cycle_ms = (t0 - _dbg_prev_t0) * 1000.0 if _dbg_prev_t0 is not None else 0.0
+            _dbg_prev_t0 = t0
 
             with self.readings_lock:
                 readings = dict(self.shared_readings)
@@ -99,12 +103,14 @@ class SnapshotThread(threading.Thread):
 
             iter_ms = (t_buf - t0) * 1000.0
             _dbg_count += 1
-            if iter_ms > 100.0 or _dbg_count % 75 == 0:
+            if cycle_ms > 150.0 or iter_ms > 100.0 or _dbg_count % 75 == 0:
                 lock_ms = (t_lock - t0) * 1000.0
                 log_ms = (t_log - t_lock) * 1000.0
                 buf_ms = (t_buf - t_log) * 1000.0
-                print(f"[snap] iter={iter_ms:6.1f}ms  lock={lock_ms:5.1f}  "
-                      f"log={log_ms:5.1f}  buf={buf_ms:5.1f}  n={_dbg_count}", flush=True)
+                wait_ms = max(0.0, cycle_ms - iter_ms)
+                print(f"[snap] cycle={cycle_ms:6.1f}ms  wait={wait_ms:6.1f}  "
+                      f"iter={iter_ms:5.1f}  lock={lock_ms:4.1f}  log={log_ms:4.1f}  "
+                      f"buf={buf_ms:5.1f}  n={_dbg_count}", flush=True)
 
             self.stop_event.wait(max(0.0, self.period - (time.monotonic() - t0)))
 
