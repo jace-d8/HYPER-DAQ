@@ -657,6 +657,8 @@ class HyperDaqApp:
     def _poll(self):
         _file_pos: int = 0
         _columns: list = []
+        _dbg_prev_t = time.monotonic()
+        _dbg_empty_streak = 0
 
         while dpg.is_dearpygui_running():
             try:
@@ -666,9 +668,6 @@ class HyperDaqApp:
                     continue
 
                 size = path.stat().st_size
-                if size == _file_pos:
-                    time.sleep(self._POLL_S)
-                    continue
 
                 if size < _file_pos:
                     # file was rewritten (buffer rotation) — reset
@@ -682,11 +681,26 @@ class HyperDaqApp:
                         _file_pos = f.tell()
                     f.seek(_file_pos)
                     new_text = f.read()
-                    _file_pos = f.tell()
+                    new_pos = f.tell()
+
+                bytes_read = new_pos - _file_pos
+                _file_pos = new_pos
+                now_t = time.monotonic()
+                d_poll = (now_t - _dbg_prev_t) * 1000.0
+                _dbg_prev_t = now_t
 
                 if not new_text.strip():
+                    _dbg_empty_streak += 1
+                    if _dbg_empty_streak in (1, 5, 25) or _dbg_empty_streak % 50 == 0:
+                        print(f"[poll] EMPTY  streak={_dbg_empty_streak:3d}  "
+                              f"size={size}  pos={_file_pos}  dt={d_poll:6.0f}ms", flush=True)
                     time.sleep(self._POLL_S)
                     continue
+
+                if _dbg_empty_streak > 0 or bytes_read > 2000:
+                    print(f"[poll] READ   bytes={bytes_read:5d}  "
+                          f"after_empty={_dbg_empty_streak:3d}  dt={d_poll:6.0f}ms", flush=True)
+                _dbg_empty_streak = 0
 
                 import io as _io
                 new_rows = pd.read_csv(_io.StringIO(new_text), header=None, names=_columns)
