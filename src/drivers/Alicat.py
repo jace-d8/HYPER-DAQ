@@ -1,11 +1,13 @@
 from src.drivers.sensor_base import SensorBase
 from alicat import FlowController
 
+
 class Alicat(SensorBase):
     def __init__(self, name="alicat"):
         super().__init__(name)
         self.flowcontroller = FlowController()
         self.connected = False
+        self.poll_hz = 40
 
     async def connect(self):
         await self.flowcontroller.get()

@@ -123,6 +123,7 @@ class SensorControllerAsync:
             return sensor.name, None
 
     async def sensor_loop(self, sensor):
+        period = 1.0 / getattr(sensor, "poll_hz", self.sample_hz)
         try:
             while not self._stop_event.is_set() and not getattr(sensor, "failed", False):
                 start = asyncio.get_running_loop().time()
@@ -130,7 +131,7 @@ class SensorControllerAsync:
                 await self.read_one(sensor)
 
                 elapsed = asyncio.get_running_loop().time() - start
-                sleep_time = max(0, self.period - elapsed)
+                sleep_time = max(0, period - elapsed)
 
                 try:
                     await asyncio.wait_for(self._stop_event.wait(), timeout=sleep_time)
@@ -158,7 +159,8 @@ class SensorControllerAsync:
                     row[sensor_name] = payload["value"]
 
                 loop = asyncio.get_running_loop()
-                await loop.run_in_executor(self._disk_executor, self.csv_buffer.append_snapshot, row)
+                await loop.run_in_executor(self._disk_executor, self.csv_buffer.log_row, row)
+                loop.run_in_executor(None, self.csv_buffer.buffer_row, row)
 
                 try:
                     await asyncio.wait_for(self._stop_event.wait(), timeout=self.period)

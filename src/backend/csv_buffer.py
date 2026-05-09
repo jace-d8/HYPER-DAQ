@@ -58,12 +58,20 @@ class CsvBuffer:
             }
 
     def append_snapshot(self, row):
+        self.log_row(row)
+        self.buffer_row(row)
+
+    def log_row(self, row):
+        """Write to data log only. Awaited — must never be skipped."""
         with self._lock:
             normalized_row = {col: row.get(col, "") for col in self._columns}
-
             self._append_data_row(normalized_row)
-            self._append_buffer_row(normalized_row)
 
+    def buffer_row(self, row):
+        """Write to display buffer. Fire-and-forget — can lag without affecting data accuracy."""
+        with self._lock:
+            normalized_row = {col: row.get(col, "") for col in self._columns}
+            self._append_buffer_row(normalized_row)
             self._rows.append(normalized_row)
             if len(self._rows) > self.max_rows:
                 self._rows = self._rows[-self.max_rows:]
