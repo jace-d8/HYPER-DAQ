@@ -8,6 +8,12 @@ from src.drivers.Lakeshore336 import TemperatureSensor
 from src.drivers.Alicat import Alicat
 from src.frontend.config import SAMPLE_HZ
 
+try:
+    from src.drivers.niDaq import NiDaqTask, NiDaqChannelConfig
+    _NIDAQMX_AVAILABLE = True
+except ImportError:
+    _NIDAQMX_AVAILABLE = False
+
 
 class SensorThread(threading.Thread):
     """
@@ -120,6 +126,20 @@ class SensorControllerAsync:
                 },
             )),
             ("Mass Flow Rate", lambda: Alicat(name="Total Flow")),
+            # --- Uncomment to enable NI-DAQ pressure sensors ---
+            # ("Pressure", lambda: NiDaqTask(
+            #     name="NI_Pressure",
+            #     channels=[
+            #         NiDaqChannelConfig("PT1", "Dev1/ai0", measurement_type="voltage"),
+            #         NiDaqChannelConfig("PT2", "Dev1/ai1", measurement_type="voltage"),
+            #         NiDaqChannelConfig("PT3", "Dev1/ai2", measurement_type="voltage"),
+            #         NiDaqChannelConfig("PT4", "Dev1/ai3", measurement_type="voltage"),
+            #         NiDaqChannelConfig("PT5", "Dev1/ai4", measurement_type="voltage"),
+            #         NiDaqChannelConfig("PT6", "Dev1/ai5", measurement_type="voltage"),
+            #         NiDaqChannelConfig("PT7", "Dev1/ai6", measurement_type="voltage"),
+            #     ],
+            #     sample_hz=SAMPLE_HZ,
+            # )),
         ]
 
         available = {}

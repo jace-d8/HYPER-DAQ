@@ -39,7 +39,6 @@ async def main():
     try:
         await controller.run()
     finally:
-        await controller.close()
         csv_buffer.close()
 
 
