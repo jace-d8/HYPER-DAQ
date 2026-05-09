@@ -74,11 +74,13 @@ class SnapshotThread(threading.Thread):
 
     def run(self):
         start = time.monotonic()
+        _dbg_count = 0
         while not self.stop_event.is_set():
             t0 = time.monotonic()
 
             with self.readings_lock:
                 readings = dict(self.shared_readings)
+            t_lock = time.monotonic()
 
             row = {"time_min": (t0 - start) / 60.0}
             row.update(readings)
@@ -87,11 +89,22 @@ class SnapshotThread(threading.Thread):
                 self.csv_buffer.log_row(row)
             except Exception as e:
                 logging.error(f"Data log write failed: {e}")
+            t_log = time.monotonic()
 
             try:
                 self.csv_buffer.buffer_row(row)
             except Exception:
                 pass
+            t_buf = time.monotonic()
+
+            iter_ms = (t_buf - t0) * 1000.0
+            _dbg_count += 1
+            if iter_ms > 100.0 or _dbg_count % 75 == 0:
+                lock_ms = (t_lock - t0) * 1000.0
+                log_ms = (t_log - t_lock) * 1000.0
+                buf_ms = (t_buf - t_log) * 1000.0
+                print(f"[snap] iter={iter_ms:6.1f}ms  lock={lock_ms:5.1f}  "
+                      f"log={log_ms:5.1f}  buf={buf_ms:5.1f}  n={_dbg_count}", flush=True)
 
             self.stop_event.wait(max(0.0, self.period - (time.monotonic() - t0)))
 
