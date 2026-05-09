@@ -150,7 +150,11 @@ class SensorControllerAsync:
                 sensor = sensor_init()
                 sensors.append(sensor)
                 if hasattr(sensor, "channels"):
-                    available.setdefault(group_name, []).extend(sensor.channels.keys())
+                    ch = sensor.channels
+                    if isinstance(ch, dict):
+                        available.setdefault(group_name, []).extend(ch.keys())
+                    else:
+                        available.setdefault(group_name, []).extend(cfg.name for cfg in ch)
                 else:
                     available.setdefault(group_name, []).append(sensor.name)
                 logging.info(f"{sensor.name} initialized")
