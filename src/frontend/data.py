@@ -13,6 +13,7 @@ from config import (
     FLOW_SENSORS,
     NOTES_FILE,
     PRESSURE_SENSORS,
+    SETTINGS_FILE,
     STREAM_SOURCE_FILE,
     TEMPERATURE_SENSORS,
     TRANSFER_SENSORS,
@@ -160,6 +161,24 @@ def load_notes() -> List[dict]:
 def save_notes(notes: List[dict]) -> None:
     with NOTES_FILE.open("w", encoding="utf-8") as f:
         json.dump(notes, f, indent=2)
+
+
+def load_settings() -> dict:
+    if not SETTINGS_FILE.exists():
+        return {}
+    try:
+        with SETTINGS_FILE.open("r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+
+def save_settings(settings: dict) -> None:
+    try:
+        with SETTINGS_FILE.open("w", encoding="utf-8") as f:
+            json.dump(settings, f, indent=2)
+    except Exception:
+        pass
 
 
 def empty_frame() -> pd.DataFrame:
