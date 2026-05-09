@@ -60,9 +60,9 @@ class CsvBuffer:
 
     def log_row(self, row):
         """Write to data log only. Called from snapshot thread — reliable, never skipped."""
+        if not self._is_logging_enabled():
+            return
         with self._lock:
-            if not self._is_logging_enabled():
-                return
             if self._data_fh is None:
                 self._open_data_file()
             if self._data_rows_written >= self.data_rows_per_file:

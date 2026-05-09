@@ -1,5 +1,7 @@
 import asyncio
+import ctypes
 import logging
+import sys
 import threading
 import time
 
@@ -7,6 +9,30 @@ from src.drivers.Lakeshore218 import SerialTemperatureSensor
 from src.drivers.Lakeshore336 import TemperatureSensor
 from src.drivers.Alicat import Alicat
 from src.frontend.config import SAMPLE_HZ
+
+
+def _windows_timer_boost():
+    """Force 1ms timer resolution. Idempotent; no-op off Windows."""
+    if sys.platform != "win32":
+        return None
+    try:
+        winmm = ctypes.WinDLL("winmm")
+        winmm.timeBeginPeriod(1)
+        return winmm
+    except Exception:
+        return None
+
+
+def _windows_thread_priority_highest():
+    """Raise the calling thread's priority. No-op off Windows."""
+    if sys.platform != "win32":
+        return
+    try:
+        kernel32 = ctypes.WinDLL("kernel32")
+        handle = kernel32.GetCurrentThread()
+        kernel32.SetThreadPriority(handle, 2)  # THREAD_PRIORITY_HIGHEST
+    except Exception:
+        pass
 
 try:
     from src.drivers.niDaq import NiDaqTask, NiDaqChannelConfig
@@ -73,6 +99,7 @@ class SnapshotThread(threading.Thread):
         self.stop_event = stop_event
 
     def run(self):
+        _windows_thread_priority_highest()
         start = time.monotonic()
         _dbg_count = 0
         _dbg_prev_t0 = None
@@ -184,6 +211,8 @@ class SensorControllerAsync:
         return sensors
 
     async def run(self):
+        _windows_timer_boost()
+
         sensors = await asyncio.to_thread(self._build_sensors)
         if not sensors:
             logging.warning("No sensors initialized successfully")
