@@ -99,9 +99,12 @@ class SnapshotThread(threading.Thread):
         self.period = 1.0 / sample_hz
         self.stop_event = stop_event
 
+    _BACKFILL_CAP = 60  # max rows produced in one wake-up after a long pause
+
     def run(self):
         _windows_thread_priority_highest()
         start = time.monotonic()
+        next_n = 0  # index of the next sample to emit
         _dbg_count = 0
         _dbg_prev_t0 = None
         while not self.stop_event.is_set():
@@ -110,25 +113,38 @@ class SnapshotThread(threading.Thread):
             cycle_ms = (t0 - _dbg_prev_t0) * 1000.0 if _dbg_prev_t0 is not None else 0.0
             _dbg_prev_t0 = t0
 
+            # Highest sample index whose grid time has passed.
+            target_n = int((t0 - start) / self.period)
+            if target_n - next_n > self._BACKFILL_CAP:
+                target_n = next_n + self._BACKFILL_CAP
+
             with self.readings_lock:
                 readings = dict(self.shared_readings)
 
-            row = {"time_min": (t0 - start) / 60.0}
-            row.update(readings)
+            rows_produced = 0
+            while next_n <= target_n:
+                row = {"time_min": (next_n * self.period) / 60.0}
+                row.update(readings)
+                self.row_queue.put(row)
+                next_n += 1
+                rows_produced += 1
 
-            self.row_queue.put(row)
             t_done = time.monotonic()
-
             iter_ms = (t_done - t0) * 1000.0
             _dbg_count += 1
-            if cycle_ms > 150.0 or iter_ms > 20.0 or _dbg_count % 150 == 0:
+            if cycle_ms > 150.0 or iter_ms > 20.0 or rows_produced > 1 or _dbg_count % 150 == 0:
                 wait_ms = max(0.0, cycle_ms - iter_ms)
                 qsize = self.row_queue.qsize()
                 print(f"[snap] cycle={cycle_ms:6.1f}ms  wait={wait_ms:6.1f}  "
-                      f"iter={iter_ms:5.2f}  qsize={qsize:3d}  n={_dbg_count}",
+                      f"iter={iter_ms:5.2f}  produced={rows_produced:3d}  "
+                      f"qsize={qsize:3d}  n={_dbg_count}",
                       flush=True)
 
-            self.stop_event.wait(max(0.0, self.period - (time.monotonic() - t0)))
+            # Sleep until the next sample's grid time.
+            next_target_t = start + next_n * self.period
+            sleep_s = next_target_t - time.monotonic()
+            if sleep_s > 0:
+                self.stop_event.wait(sleep_s)
 
 
 class WriterThread(threading.Thread):
