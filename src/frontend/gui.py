@@ -494,17 +494,28 @@ class HyperDaqApp:
                 dpg.add_separator()
 
     def _on_save(self):
-        dpg.add_file_dialog(
+        fmt = self._save_format  # "csv" | "json" | "xlsx"
+        # File dialogs must be created as a context so extension filters can be
+        # registered. Default filename is the bare stem; extension is appended
+        # in _do_save based on the active format.
+        with dpg.file_dialog(
             label="Save Data",
             callback=self._do_save,
-            default_filename=f"cryo_data.{self._save_format}",
+            default_filename="cryo_data",
             width=640, height=420,
-        )
+            modal=True,
+            directory_selector=False,
+        ):
+            dpg.add_file_extension(f".{fmt}", color=(102, 187, 255, 255))
+            dpg.add_file_extension(".*")
 
     def _do_save(self, sender, app_data):
         path = (app_data or {}).get("file_path_name", "")
         if not path:
             return
+        expected_ext = f".{self._save_format.lower()}"
+        if not path.lower().endswith(expected_ext):
+            path = path + expected_ext
         with self._lock:
             df = self._df.copy()
         if dpg.get_value("save_scope") and not df.empty:
@@ -832,6 +843,9 @@ class HyperDaqApp:
         self._apply_settings()
         dpg.set_primary_window("primary", True)
         dpg.show_viewport()
+        # Snap to whichever monitor the window opens on. Inner panels use
+        # width=-1 / height=-1 so they expand to fill.
+        dpg.maximize_viewport()
 
         threading.Thread(target=self._poll, daemon=True).start()
 
