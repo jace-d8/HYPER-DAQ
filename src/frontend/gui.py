@@ -76,6 +76,9 @@ class HyperDaqApp:
         self._last_seen: Optional[float] = None
         self._update_q: queue.Queue = queue.Queue()
 
+        self._wall_anchor_data_time: Optional[float] = None
+        self._wall_anchor_mono: Optional[float] = None
+
         self._logging_enabled = False
         self._pinned_time: Optional[float] = None
         self._notes = load_notes()
@@ -489,10 +492,27 @@ class HyperDaqApp:
     # Live updates  (called from main loop — always on main thread)
     # ------------------------------------------------------------------
 
+    def _wall_clock_ct(self, df: pd.DataFrame) -> float:
+        """Right edge of sliding window, anchored to wall-clock so it advances
+        smoothly even when data arrives in bursts. Re-anchors if data resets
+        (controller restart) or runs ahead (clock skew, very long catch-up)."""
+        last_data = float(df.iloc[-1]["time_min"])
+        now = time.monotonic()
+        if self._wall_anchor_mono is None or last_data < (self._wall_anchor_data_time or 0.0):
+            self._wall_anchor_data_time = last_data
+            self._wall_anchor_mono = now
+            return last_data
+        estimated = self._wall_anchor_data_time + (now - self._wall_anchor_mono) / 60.0
+        if last_data > estimated + 2.0 / 60.0:
+            self._wall_anchor_data_time = last_data
+            self._wall_anchor_mono = now
+            return last_data
+        return estimated
+
     def _update_plots(self, df: pd.DataFrame):
         if df.empty:
             return
-        ct = float(df.iloc[-1]["time_min"])
+        ct = self._wall_clock_ct(df)
         ws = ct - self._window_minutes
 
         now_mono = time.monotonic()
