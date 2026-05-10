@@ -408,7 +408,34 @@ class HyperDaqApp:
         tag = f"plot_{group}"
         if dpg.does_item_exist(tag):
             dpg.configure_item(tag, show=enabled)
+        self._layout_plots()
         self._save_settings()
+
+    def _layout_plots(self):
+        """Recompute heights of visible main-group plots so they fill the
+        available vertical space in the main panel. Called on viewport
+        resize and whenever a group is toggled."""
+        try:
+            vh = dpg.get_viewport_client_height()
+        except Exception:
+            vh = dpg.get_viewport_height()
+
+        # Banner + toolbar + separator + paddings = ~110 px overhead.
+        # Reserve a little headroom at the bottom for user-added custom graphs.
+        custom_reserve = 0
+        if self._custom_graphs:
+            custom_reserve = min(len(self._custom_graphs) * 210 + 30, vh // 2)
+        available = vh - self._BANNER_H - 110 - custom_reserve
+
+        visible = [g for g in ALL_SENSOR_GROUPS if self._group_visible.get(g, True)]
+        if not visible:
+            return
+        plot_h = max(160, available // len(visible))
+
+        for group in ALL_SENSOR_GROUPS:
+            tag = f"plot_{group}"
+            if dpg.does_item_exist(tag) and self._group_visible.get(group, True):
+                dpg.configure_item(tag, height=plot_h)
 
     def _on_left_click(self):
         for group in ALL_SENSOR_GROUPS:
@@ -843,9 +870,11 @@ class HyperDaqApp:
         self._apply_settings()
         dpg.set_primary_window("primary", True)
         dpg.show_viewport()
-        # Snap to whichever monitor the window opens on. Inner panels use
-        # width=-1 / height=-1 so they expand to fill.
+        # Snap to whichever monitor the window opens on, then redistribute
+        # plot heights to actually fill that screen.
         dpg.maximize_viewport()
+        self._layout_plots()
+        dpg.set_viewport_resize_callback(lambda s, a: self._layout_plots())
 
         threading.Thread(target=self._poll, daemon=True).start()
 
