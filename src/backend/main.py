@@ -1,9 +1,8 @@
-import asyncio
 import logging
 from datetime import datetime
 from pathlib import Path
 
-from controller import SensorControllerAsync
+from controller import SensorController
 from csv_buffer import CsvBuffer
 from src.frontend.config import BUFFER_MAX_ROWS, SAMPLE_HZ
 
@@ -20,7 +19,7 @@ logging.basicConfig(
 )
 
 
-async def main():
+def main():
     DATA_DIR.mkdir(parents=True, exist_ok=True)
 
     csv_buffer = CsvBuffer(
@@ -31,16 +30,18 @@ async def main():
         logging_state_file=DATA_DIR / "logging_state.json",
     )
 
-    controller = SensorControllerAsync(
+    controller = SensorController(
         csv_buffer=csv_buffer,
         sample_hz=SAMPLE_HZ,
     )
 
     try:
-        await controller.run()
+        controller.run()
+    except KeyboardInterrupt:
+        controller.stop()
     finally:
         csv_buffer.close()
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()

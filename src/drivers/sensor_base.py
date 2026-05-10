@@ -6,7 +6,7 @@ class SensorBase(ABC):
         self.name = name
 
     @abstractmethod
-    async def read(self):
+    def read(self):
         pass
 
     def close(self):

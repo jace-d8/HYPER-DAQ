@@ -1,4 +1,3 @@
-import asyncio
 import ctypes
 import logging
 import queue
@@ -10,6 +9,12 @@ from src.drivers.Lakeshore218 import SerialTemperatureSensor
 from src.drivers.Lakeshore336 import TemperatureSensor
 from src.drivers.Alicat import Alicat
 from src.frontend.config import SAMPLE_HZ
+
+try:
+    from src.drivers.niDaq import NiDaqTask, NiDaqChannelConfig
+    _NIDAQMX_AVAILABLE = True
+except ImportError:
+    _NIDAQMX_AVAILABLE = False
 
 
 def _windows_timer_boost():
@@ -35,18 +40,12 @@ def _windows_thread_priority_highest():
     except Exception:
         pass
 
-try:
-    from src.drivers.niDaq import NiDaqTask, NiDaqChannelConfig
-    _NIDAQMX_AVAILABLE = True
-except ImportError:
-    _NIDAQMX_AVAILABLE = False
-
 
 class SensorThread(threading.Thread):
     """
-    Dedicated thread per sensor with its own asyncio event loop.
-    Async and sync drivers both work. Completely isolated from other sensors
-    and the snapshot thread — a slow or hung read never affects anything else.
+    Polls one sensor in its own thread. Driver presents a sync interface
+    (connect/read/close); any asyncio plumbing lives inside the driver.
+    A slow or hung read on this sensor never affects others.
     """
 
     def __init__(self, sensor, on_reading, stop_event: threading.Event):
@@ -57,31 +56,29 @@ class SensorThread(threading.Thread):
         self.period = 1.0 / getattr(sensor, "poll_hz", SAMPLE_HZ)
 
     def run(self):
-        asyncio.run(self._loop())
-
-    async def _loop(self):
         if hasattr(self.sensor, "connect"):
             try:
-                result = self.sensor.connect()
-                if asyncio.iscoroutine(result):
-                    await result
+                self.sensor.connect()
             except Exception as e:
                 logging.error(f"{self.sensor.name} connect failed: {e}")
                 return
 
-        while not self.stop_event.is_set():
-            t0 = asyncio.get_event_loop().time()
-            try:
-                if asyncio.iscoroutinefunction(self.sensor.read):
-                    payload = await self.sensor.read()
-                else:
-                    payload = await asyncio.to_thread(self.sensor.read)
-                if payload is not None:
-                    self.on_reading(self.sensor.name, payload)
-            except Exception as e:
-                logging.error(f"{self.sensor.name} read failed: {e}")
-
-            await asyncio.sleep(max(0.0, self.period - (asyncio.get_event_loop().time() - t0)))
+        try:
+            while not self.stop_event.is_set():
+                t0 = time.monotonic()
+                try:
+                    payload = self.sensor.read()
+                    if payload is not None:
+                        self.on_reading(self.sensor.name, payload)
+                except Exception as e:
+                    logging.error(f"{self.sensor.name} read failed: {e}")
+                self.stop_event.wait(max(0.0, self.period - (time.monotonic() - t0)))
+        finally:
+            if hasattr(self.sensor, "close"):
+                try:
+                    self.sensor.close()
+                except Exception as e:
+                    logging.error(f"{self.sensor.name} close failed: {e}")
 
 
 class SnapshotThread(threading.Thread):
@@ -91,6 +88,8 @@ class SnapshotThread(threading.Thread):
     so this thread's timing is decoupled from filesystem stalls.
     """
 
+    _BACKFILL_CAP = 60  # max rows produced in one wake-up after a long pause
+
     def __init__(self, shared_readings, readings_lock, row_queue, sample_hz, stop_event):
         super().__init__(daemon=True, name="snapshot")
         self.shared_readings = shared_readings
@@ -98,8 +97,6 @@ class SnapshotThread(threading.Thread):
         self.row_queue = row_queue
         self.period = 1.0 / sample_hz
         self.stop_event = stop_event
-
-    _BACKFILL_CAP = 60  # max rows produced in one wake-up after a long pause
 
     def run(self):
         _windows_thread_priority_highest()
@@ -194,7 +191,7 @@ class WriterThread(threading.Thread):
                       f"qsize_after={qsize:3d}  n={_dbg_count}", flush=True)
 
 
-class SensorControllerAsync:
+class SensorController:
     def __init__(self, csv_buffer, sample_hz=SAMPLE_HZ):
         self.sample_hz = sample_hz
         self.csv_buffer = csv_buffer
@@ -264,10 +261,11 @@ class SensorControllerAsync:
         self.csv_buffer.set_available_sensors(available)
         return sensors
 
-    async def run(self):
+    def run(self):
+        """Blocks the calling thread until stop() is called or the process is interrupted."""
         _windows_timer_boost()
 
-        sensors = await asyncio.to_thread(self._build_sensors)
+        sensors = self._build_sensors()
         if not sensors:
             logging.warning("No sensors initialized successfully")
             return
@@ -292,13 +290,14 @@ class SensorControllerAsync:
 
         try:
             while not self._stop_event.is_set():
-                await asyncio.sleep(0.5)
-        except asyncio.CancelledError:
-            pass
+                self._stop_event.wait(0.5)
         finally:
-            await self.close()
+            self.close()
 
-    async def close(self):
+    def stop(self):
+        self._stop_event.set()
+
+    def close(self):
         self._stop_event.set()
 
         for t in self._sensor_threads:
@@ -308,15 +307,6 @@ class SensorControllerAsync:
         if self._writer_thread:
             self._writer_thread.join(timeout=5.0)
 
-        for t in self._sensor_threads:
-            sensor = t.sensor
-            if hasattr(sensor, "close"):
-                try:
-                    result = sensor.close()
-                    if asyncio.iscoroutine(result):
-                        await result
-                except Exception as e:
-                    logging.error(f"Failed to close {sensor.name}: {e}")
-
         self._sensor_threads.clear()
         self._snapshot_thread = None
+        self._writer_thread = None
