@@ -412,20 +412,33 @@ class HyperDaqApp:
         self._save_settings()
 
     def _layout_plots(self):
-        """Recompute heights of visible main-group plots so they fill the
-        available vertical space in the main panel. Called on viewport
-        resize and whenever a group is toggled."""
+        """Recompute panel and plot sizes to fill the current viewport.
+        Called on viewport resize and whenever a group is toggled."""
         try:
+            vw = dpg.get_viewport_client_width()
             vh = dpg.get_viewport_client_height()
         except Exception:
+            vw = dpg.get_viewport_width()
             vh = dpg.get_viewport_height()
+
+        # Top-level columns fill the body height (everything under the banner).
+        body_h = max(200, vh - self._BANNER_H - 8)
+        main_w = max(400, vw - self._SIDEBAR_W - self._METRICS_W - 30)
+
+        for tag, w, h in (
+            ("sidebar", self._SIDEBAR_W, body_h),
+            ("main_panel", main_w, body_h),
+            ("metrics_panel", self._METRICS_W, body_h),
+        ):
+            if dpg.does_item_exist(tag):
+                dpg.configure_item(tag, width=w, height=h)
 
         # Banner + toolbar + separator + paddings = ~110 px overhead.
         # Reserve a little headroom at the bottom for user-added custom graphs.
         custom_reserve = 0
         if self._custom_graphs:
             custom_reserve = min(len(self._custom_graphs) * 210 + 30, vh // 2)
-        available = vh - self._BANNER_H - 110 - custom_reserve
+        available = body_h - 110 - custom_reserve
 
         visible = [g for g in ALL_SENSOR_GROUPS if self._group_visible.get(g, True)]
         if not visible:
