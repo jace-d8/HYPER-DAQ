@@ -447,12 +447,12 @@ class HyperDaqApp:
         for group in ALL_SENSOR_GROUPS:
             tag = f"plot_{group}"
             if dpg.does_item_exist(tag) and self._group_visible.get(group, True):
-                dpg.configure_item(tag, height=plot_h)
+                dpg.set_item_height(tag, plot_h)
 
         for graph in self._custom_graphs:
             tag = f"cg_plot_{graph['id']}"
             if dpg.does_item_exist(tag):
-                dpg.configure_item(tag, height=plot_h)
+                dpg.set_item_height(tag, plot_h)
 
     def _on_left_click(self):
         for group in ALL_SENSOR_GROUPS:
