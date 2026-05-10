@@ -509,6 +509,23 @@ class HyperDaqApp:
             return last_data
         return estimated
 
+    def _slide_axes(self):
+        """Advance the x-axis right edge using wall-clock-derived ct.
+        Called every render frame so the window slides smoothly between data updates."""
+        with self._lock:
+            df = self._df
+        if df.empty:
+            return
+        ct = self._wall_clock_ct(df)
+        ws = ct - self._window_minutes
+        for xt in self._xaxis_tags.values():
+            if xt and dpg.does_item_exist(xt):
+                dpg.set_axis_limits(xt, ws, ct)
+        for graph in self._custom_graphs:
+            xt = self._custom_xaxis.get(graph["id"])
+            if xt and dpg.does_item_exist(xt):
+                dpg.set_axis_limits(xt, ws, ct)
+
     def _update_plots(self, df: pd.DataFrame):
         if df.empty:
             return
@@ -774,6 +791,7 @@ class HyperDaqApp:
                 self._update_plots(df)
                 self._update_metrics(df)
 
+            self._slide_axes()
             dpg.render_dearpygui_frame()
 
         dpg.destroy_context()
