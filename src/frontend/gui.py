@@ -338,9 +338,11 @@ class HyperDaqApp:
     # Callbacks  (all fire on main thread via DPG)
     # ------------------------------------------------------------------
 
-    def _on_log_toggle(self):
-        self._logging_enabled = not self._logging_enabled
-        if self._logging_enabled:
+    def _set_logging_ui(self, on: bool) -> None:
+        """Update the button + banner to reflect the given state. Does not
+        touch the on-disk state file."""
+        self._logging_enabled = on
+        if on:
             dpg.set_value("banner_text", "LOGGING ACTIVE — RECORDING MODE")
             dpg.configure_item("log_btn", label="Logging ON")
             dpg.bind_item_theme("log_btn", "t_btn_on")
@@ -350,12 +352,40 @@ class HyperDaqApp:
             dpg.configure_item("log_btn", label="Logging OFF")
             dpg.bind_item_theme("log_btn", "t_btn_off")
             dpg.bind_item_theme("banner", "t_banner_off")
+
+    def _write_logging_state_atomic(self, state: dict) -> None:
         try:
             LOGGING_STATE_FILE.parent.mkdir(parents=True, exist_ok=True)
-            with open(LOGGING_STATE_FILE, "w") as f:
-                json.dump({"enabled": self._logging_enabled}, f)
+            tmp = LOGGING_STATE_FILE.with_suffix(LOGGING_STATE_FILE.suffix + ".tmp")
+            with open(tmp, "w") as f:
+                json.dump(state, f)
+            tmp.replace(LOGGING_STATE_FILE)
         except Exception:
             pass
+
+    def _on_log_toggle(self):
+        new_state = not self._logging_enabled
+        if new_state:
+            ts = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+            run_dir = (LOGGING_STATE_FILE.parent / f"run_{ts}").resolve()
+            run_dir.mkdir(parents=True, exist_ok=True)
+            self._set_logging_ui(True)
+            self._write_logging_state_atomic({"enabled": True, "run_dir": str(run_dir)})
+        else:
+            self._set_logging_ui(False)
+            self._write_logging_state_atomic({"enabled": False})
+
+    def _sync_logging_state_from_disk(self) -> None:
+        """Reflect external changes to logging_state.json into the UI — covers
+        the unifier auto-stopping at the row cap."""
+        try:
+            with open(LOGGING_STATE_FILE, "r") as f:
+                state = json.load(f)
+        except (FileNotFoundError, json.JSONDecodeError):
+            return
+        on_disk = bool(state.get("enabled", False))
+        if on_disk != self._logging_enabled:
+            self._set_logging_ui(on_disk)
 
     def _on_window_changed(self):
         val = max(0.5, float(dpg.get_value("win_val") or 0))
@@ -728,6 +758,9 @@ class HyperDaqApp:
                 "rb": rb,
                 "last_idx": 0,
             })
+        # Adopt the controller's time origin so display ct matches CSV time_min.
+        if "start_monotonic" in manifest:
+            self._session_start = float(manifest["start_monotonic"])
         return attached
 
     def _poll(self):
@@ -775,10 +808,10 @@ class HyperDaqApp:
             time.sleep(self._POLL_S)
 
     def _wall_clock_data_time(self) -> float:
-        """Monotonic seconds since this GUI session started, in minutes.
-        Used as the time_min for unified display rows. Storage is
-        per-sensor with its own native timestamps — this is only for the
-        in-memory display frame."""
+        """Minutes since the controller's start_monotonic (taken from the
+        manifest in _attach_buffers). The CSV ``time_min`` columns share
+        this exact reference, so on-disk timestamps match what's on the
+        chart x-axis."""
         if not hasattr(self, "_session_start"):
             self._session_start = time.monotonic()
         return (time.monotonic() - self._session_start) / 60.0
@@ -816,6 +849,14 @@ class HyperDaqApp:
                 self._update_metrics(df)
 
             self._slide_axes()
+
+            # Cheap once-per-second sync of logging button to disk state —
+            # picks up the unifier's auto-stop when it hits the row cap.
+            now_mono = time.monotonic()
+            if now_mono - getattr(self, "_last_log_sync", 0.0) > 1.0:
+                self._last_log_sync = now_mono
+                self._sync_logging_state_from_disk()
+
             dpg.render_dearpygui_frame()
 
         dpg.destroy_context()

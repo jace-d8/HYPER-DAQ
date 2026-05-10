@@ -7,6 +7,7 @@ from controller import SensorController
 DATA_DIR = Path(__file__).parent.parent.parent / "data"
 LOGS_DIR = Path(__file__).parent.parent.parent / "logs"
 MANIFEST_PATH = DATA_DIR / "sensor_manifest.json"
+LOGGING_STATE_FILE = DATA_DIR / "logging_state.json"
 
 LOGS_DIR.mkdir(parents=True, exist_ok=True)
 log_filename = LOGS_DIR / f"run_{datetime.now():%Y-%m-%d_%H-%M-%S}.log"
@@ -20,7 +21,11 @@ logging.basicConfig(
 
 def main():
     DATA_DIR.mkdir(parents=True, exist_ok=True)
-    controller = SensorController(data_dir=DATA_DIR, manifest_path=MANIFEST_PATH)
+    controller = SensorController(
+        data_dir=DATA_DIR,
+        manifest_path=MANIFEST_PATH,
+        logging_state_file=LOGGING_STATE_FILE,
+    )
     try:
         controller.run()
     except KeyboardInterrupt:
