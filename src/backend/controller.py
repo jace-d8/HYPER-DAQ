@@ -48,23 +48,21 @@ SENSOR_SPECS = [
         "channels": ["Total Flow"],
         "group": "Mass Flow Rate",
     },
-    # --- Uncomment to enable NI-DAQ pressure sensors -----------------------
-    # {
-    #     "name": "NI_Pressure",
-    #     "module": "src.drivers.niDaq",
-    #     "class": "NiDaqTask",
-    #     "kwargs": {
-    #         "name": "NI_Pressure",
-    #         "channels": [
-    #             # NiDaqChannelConfig(...) — supply as dataclass-compatible
-    #             # kwargs if you keep this list of dicts, or a list of
-    #             # NiDaqChannelConfig instances if you build them explicitly.
-    #         ],
-    #         "sample_hz": 15,
-    #     },
-    #     "channels": ["PT1", "PT2", "PT3", "PT4", "PT5", "PT6", "PT7"],
-    #     "group": "Pressure",
-    # },
+    {
+        "name": "NI_Pressure",
+        "module": "src.drivers.niDaq",
+        "class": "NiDaqTask",
+        "kwargs": {
+            "name": "NI_Pressure",
+            "channels": [
+                NiDaqChannelConfig(name="PT1", physical_channel="cDAQ2Mod1/ai0", measurement_type="current", min_val=0.002, max_val = 0.004),
+                NiDaqChannelConfig(name="PT2", physical_channel="cDAQ2Mod1/ai2", measurement_type="current", min_val=0.002, max_val = 0.004),
+            ],
+            "sample_hz": 15,
+        },
+        "channels": ["PT1", "PT2", "PT3", "PT4", "PT5", "PT6", "PT7"],
+        "group": "Pressure",
+    },
 ]
 
 
