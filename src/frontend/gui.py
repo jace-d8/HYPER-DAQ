@@ -433,21 +433,25 @@ class HyperDaqApp:
             if dpg.does_item_exist(tag):
                 dpg.configure_item(tag, width=w, height=h)
 
-        # Banner + toolbar + separator + paddings = ~110 px overhead.
-        # Reserve a little headroom at the bottom for user-added custom graphs.
-        custom_reserve = 0
-        if self._custom_graphs:
-            custom_reserve = min(len(self._custom_graphs) * 210 + 30, vh // 2)
-        available = body_h - 110 - custom_reserve
+        # Banner + toolbar + separator + per-card chrome = ~110 px overhead,
+        # plus ~30 px of header per custom-graph card.
+        custom_header_overhead = len(self._custom_graphs) * 30
+        available = body_h - 110 - custom_header_overhead
 
-        visible = [g for g in ALL_SENSOR_GROUPS if self._group_visible.get(g, True)]
-        if not visible:
+        visible_main = [g for g in ALL_SENSOR_GROUPS if self._group_visible.get(g, True)]
+        n_total = len(visible_main) + len(self._custom_graphs)
+        if n_total == 0:
             return
-        plot_h = max(160, available // len(visible))
+        plot_h = max(160, available // n_total)
 
         for group in ALL_SENSOR_GROUPS:
             tag = f"plot_{group}"
             if dpg.does_item_exist(tag) and self._group_visible.get(group, True):
+                dpg.configure_item(tag, height=plot_h)
+
+        for graph in self._custom_graphs:
+            tag = f"cg_plot_{graph['id']}"
+            if dpg.does_item_exist(tag):
                 dpg.configure_item(tag, height=plot_h)
 
     def _on_left_click(self):
@@ -501,6 +505,7 @@ class HyperDaqApp:
         if not sensors:
             return
         self._add_custom_graph_from_config(group, sensors)
+        self._layout_plots()
         self._save_settings()
 
     def _remove_custom_graph(self, gid: int):
@@ -510,6 +515,7 @@ class HyperDaqApp:
         self._custom_xaxis.pop(gid, None)
         self._custom_yaxis.pop(gid, None)
         self._custom_series.pop(gid, None)
+        self._layout_plots()
         self._save_settings()
 
     def _add_note(self):
