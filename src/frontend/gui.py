@@ -24,7 +24,7 @@ from config import (
     LOGGING_STATE_FILE,
     POLL_INTERVAL_MS,
     SAMPLE_HZ,
-    STREAM_SOURCE_FILE,
+    SENSOR_MANIFEST_FILE,
     WINDOW_UNIT_TO_MINUTES,
     max_lookback_minutes,
 )
@@ -224,7 +224,7 @@ class HyperDaqApp:
             # Stream
             dpg.add_text("STREAM", color=(59, 130, 246, 255))
             dpg.add_separator()
-            dpg.add_text(f"Source: {STREAM_SOURCE_FILE.name}", color=(107, 114, 128, 255),
+            dpg.add_text("Source: shared memory", color=(107, 114, 128, 255),
                          wrap=self._SIDEBAR_W - 20)
             dpg.add_text("Window size", color=(107, 114, 128, 255))
             with dpg.group(horizontal=True):
@@ -691,73 +691,97 @@ class HyperDaqApp:
     # Poll thread
     # ------------------------------------------------------------------
 
+    def _load_manifest(self):
+        """Read the sensor manifest written by the controller. Returns None
+        if it doesn't exist yet (controller not running)."""
+        try:
+            with open(SENSOR_MANIFEST_FILE, "r") as f:
+                return json.load(f)
+        except (FileNotFoundError, json.JSONDecodeError):
+            return None
+
+    def _attach_buffers(self):
+        """Try to attach to all sensors' shared-memory ring buffers based on
+        the manifest. Returns a list of dicts with sensor metadata + handles,
+        or [] if the manifest isn't ready or any segment is missing."""
+        manifest = self._load_manifest()
+        if not manifest:
+            return []
+        from src.backend.shared_buffer import SensorRingBuffer
+        attached = []
+        for sensor in manifest["sensors"]:
+            try:
+                rb = SensorRingBuffer(
+                    name=sensor["shm_name"],
+                    capacity=manifest["capacity"],
+                    num_channels=len(sensor["channels"]),
+                    create=False,
+                )
+            except FileNotFoundError:
+                # Some segments not ready yet — bail and retry later.
+                for entry in attached:
+                    entry["rb"].close()
+                return []
+            attached.append({
+                "name": sensor["name"],
+                "channels": sensor["channels"],
+                "rb": rb,
+                "last_idx": 0,
+            })
+        return attached
+
     def _poll(self):
-        _file_pos: int = 0
-        _columns: list = []
-        _dbg_prev_t = time.monotonic()
-        _dbg_empty_streak = 0
+        attached: list = []
+
+        # Wait for the controller to come up and write a manifest.
+        while dpg.is_dearpygui_running() and not attached:
+            attached = self._attach_buffers()
+            if not attached:
+                time.sleep(0.5)
+
+        # Latest known value per channel — feeds the unified row each tick.
+        latest: dict = {}
 
         while dpg.is_dearpygui_running():
             try:
-                path = STREAM_SOURCE_FILE
-                if not path.exists():
-                    time.sleep(self._POLL_S)
-                    continue
+                any_new = False
+                for entry in attached:
+                    rows, new_idx = entry["rb"].snapshot(entry["last_idx"])
+                    entry["last_idx"] = new_idx
+                    if rows.shape[0] == 0:
+                        continue
+                    any_new = True
+                    # Take the most recent row for the unified display frame.
+                    last_row = rows[-1]
+                    for j, ch in enumerate(entry["channels"]):
+                        latest[ch] = float(last_row[1 + j])
 
-                size = path.stat().st_size
-
-                if size < _file_pos:
-                    # file was rewritten (buffer rotation) — reset
-                    _file_pos = 0
-                    _columns = []
-
-                with open(path, "r", newline="", encoding="utf-8") as f:
-                    if not _columns or _file_pos == 0:
-                        header = f.readline()
-                        _columns = [c.strip() for c in header.strip().split(",")]
-                        _file_pos = f.tell()
-                    f.seek(_file_pos)
-                    new_text = f.read()
-                    new_pos = f.tell()
-
-                bytes_read = new_pos - _file_pos
-                _file_pos = new_pos
-                now_t = time.monotonic()
-                d_poll = (now_t - _dbg_prev_t) * 1000.0
-                _dbg_prev_t = now_t
-
-                if not new_text.strip():
-                    _dbg_empty_streak += 1
-                    if _dbg_empty_streak in (1, 5, 25) or _dbg_empty_streak % 50 == 0:
-                        print(f"[poll] EMPTY  streak={_dbg_empty_streak:3d}  "
-                              f"size={size}  pos={_file_pos}  dt={d_poll:6.0f}ms", flush=True)
-                    time.sleep(self._POLL_S)
-                    continue
-
-                if _dbg_empty_streak > 0 or bytes_read > 2000:
-                    print(f"[poll] READ   bytes={bytes_read:5d}  "
-                          f"after_empty={_dbg_empty_streak:3d}  dt={d_poll:6.0f}ms", flush=True)
-                _dbg_empty_streak = 0
-
-                import io as _io
-                new_rows = pd.read_csv(_io.StringIO(new_text), header=None, names=_columns)
-                new_rows = DataAdapter.normalize(new_rows)
-
-                if not new_rows.empty:
+                if any_new and latest:
+                    t_min = self._wall_clock_data_time()
+                    new_row = pd.DataFrame([{"time_min": t_min, **latest}])
                     with self._lock:
                         cached = self._df
                         last = self._last_seen
-                    updated = append_new_stream_rows(cached, new_rows, last,
-                                                     max_rows=BUFFER_MAX_ROWS)
+                    updated = append_new_stream_rows(
+                        cached, new_row, last, max_rows=BUFFER_MAX_ROWS,
+                    )
                     if not updated.empty:
-                        new_last = float(updated.iloc[-1]["time_min"])
                         with self._lock:
                             self._df = updated
-                            self._last_seen = new_last
+                            self._last_seen = float(updated.iloc[-1]["time_min"])
                         self._update_q.put(updated)
             except Exception:
                 pass
             time.sleep(self._POLL_S)
+
+    def _wall_clock_data_time(self) -> float:
+        """Monotonic seconds since this GUI session started, in minutes.
+        Used as the time_min for unified display rows. Storage is
+        per-sensor with its own native timestamps — this is only for the
+        in-memory display frame."""
+        if not hasattr(self, "_session_start"):
+            self._session_start = time.monotonic()
+        return (time.monotonic() - self._session_start) / 60.0
 
     # ------------------------------------------------------------------
     # Run

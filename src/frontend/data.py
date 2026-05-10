@@ -14,7 +14,6 @@ from config import (
     NOTES_FILE,
     PRESSURE_SENSORS,
     SETTINGS_FILE,
-    STREAM_SOURCE_FILE,
     TEMPERATURE_SENSORS,
     TRANSFER_SENSORS,
     ALL_SENSOR_GROUPS,
@@ -186,18 +185,11 @@ def empty_frame() -> pd.DataFrame:
     return pd.DataFrame(columns=cols)
 
 
-def ensure_stream_source_exists() -> None:
-    if STREAM_SOURCE_FILE.exists():
-        return
-    empty_frame().to_csv(STREAM_SOURCE_FILE, index=False)
-
-
 def load_stream_source() -> pd.DataFrame:
-    ensure_stream_source_exists()
-    try:
-        df = pd.read_csv(STREAM_SOURCE_FILE)
-    except pd.errors.EmptyDataError:
-        df = empty_frame()
+    """Legacy entry point — Tier-3 GUI builds its DataFrame from shared-memory
+    ring buffers, not a CSV. Kept as a no-op for backward compat with any
+    callers that haven't been updated yet."""
+    df = empty_frame()
     return DataAdapter.normalize(df)
 
 
