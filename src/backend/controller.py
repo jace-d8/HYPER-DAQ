@@ -19,6 +19,7 @@ import logging
 import multiprocessing
 import threading
 import time
+import uuid
 from pathlib import Path
 
 from src.backend.shared_buffer import SensorRingBuffer
@@ -58,22 +59,22 @@ SENSOR_SPECS = [
         "group": "Mass Flow Rate",
     },
     # --- Example: 2 current sensors via NI-DAQ (4-20 mA loop) --------------
-    # Uncomment, requires nidaqmx installed.
-    {
-        "name": "NI_Pressure",
-        "module": "src.drivers.niDaq",
-        "class": "NiDaqTask",
-        "kwargs": {
-            "name": "NI_Pressure",
-            "channels": [
-                NiDaqChannelConfig(name="PT1", physical_channel="cDAQ2Mod1/ai0", measurement_type="current", min_val=0.002, max_val = 0.004),
-                NiDaqChannelConfig(name="PT2", physical_channel="cDAQ2Mod1/ai2", measurement_type="current", min_val=0.002, max_val = 0.004),
-            ],
-            "sample_hz": 15,
-        },
-        "channels": ["PT1", "PT2", "PT3", "PT4", "PT5", "PT6", "PT7"],
-        "group": "Pressure",
-    },
+    # # Uncomment, requires nidaqmx installed.
+    # {
+    #     "name": "NI_Pressure",
+    #     "module": "src.drivers.niDaq",
+    #     "class": "NiDaqTask",
+    #     "kwargs": {
+    #         "name": "NI_Pressure",
+    #         "channels": [
+    #             NiDaqChannelConfig(name="PT1", physical_channel="cDAQ2Mod1/ai0", measurement_type="current", min_val=0.002, max_val = 0.004),
+    #             NiDaqChannelConfig(name="PT2", physical_channel="cDAQ2Mod1/ai2", measurement_type="current", min_val=0.002, max_val = 0.004),
+    #         ],
+    #         "sample_hz": 15,
+    #     },
+    #     "channels": ["PT1", "PT2", "PT3", "PT4", "PT5", "PT6", "PT7"],
+    #     "group": "Pressure",
+    # },
 ]
 
 
@@ -83,8 +84,11 @@ UNIFIED_RATE_HZ = 10_000 / 3600  # ≈ 2.78 Hz
 UNIFIED_MAX_ROWS = 10_000
 
 
-def _shm_name(sensor_name: str) -> str:
-    return f"hyperdaq_{sensor_name}"
+def _shm_name(sensor_name: str, run_id: str) -> str:
+    """Per-run segment name. The run_id suffix guarantees a fresh namespace
+    even if orphan subprocesses from a previous run still hold handles to
+    old segments (a common Windows scenario after a crash)."""
+    return f"hyperdaq_{sensor_name}_{run_id}"
 
 
 def _read_logging_state(path: Path) -> dict:
@@ -245,6 +249,9 @@ class SensorController:
         self._buffers: list[dict] = []
         self._unifier: UnifierThread | None = None
         self._start_monotonic: float = 0.0
+        # Short random tag appended to every shared-memory segment name. New
+        # one each run, so orphan segments from a previous crash never block us.
+        self._run_id: str = uuid.uuid4().hex[:8]
 
     def _write_manifest(self) -> None:
         manifest = {
@@ -255,7 +262,7 @@ class SensorController:
                     "name": spec["name"],
                     "channels": spec["channels"],
                     "group": spec.get("group", "Other"),
-                    "shm_name": _shm_name(spec["name"]),
+                    "shm_name": _shm_name(spec["name"], self._run_id),
                 }
                 for spec in SENSOR_SPECS
             ],
@@ -279,7 +286,7 @@ class SensorController:
         # Pre-create shared memory in the parent.
         for spec in SENSOR_SPECS:
             rb = SensorRingBuffer(
-                name=_shm_name(spec["name"]),
+                name=_shm_name(spec["name"], self._run_id),
                 capacity=self.capacity,
                 num_channels=len(spec["channels"]),
                 create=True,
@@ -298,7 +305,7 @@ class SensorController:
                 target=run_sensor,
                 args=(
                     spec,
-                    _shm_name(spec["name"]),
+                    _shm_name(spec["name"], self._run_id),
                     self.capacity,
                     self._start_monotonic,
                     str(self.logging_state_file),

@@ -37,6 +37,11 @@ def main() -> int:
     if sys.platform == "win32":
         creationflags = subprocess.CREATE_NO_WINDOW
 
+    print("HYPER-DAQ launcher starting...")
+    print(f"  repo:   {ROOT}")
+    print(f"  python: {sys.executable}")
+    print()
+    print("Starting backend...")
     backend = subprocess.Popen(
         [sys.executable, str(BACKEND_MAIN)],
         cwd=str(ROOT),
@@ -47,20 +52,21 @@ def main() -> int:
     deadline = time.monotonic() + BACKEND_STARTUP_TIMEOUT
     while not MANIFEST.exists():
         if backend.poll() is not None:
-            sys.stderr.write(
+            print(
                 f"Backend exited before manifest appeared (exit code "
-                f"{backend.returncode}). Check the latest file in /logs/.\n"
+                f"{backend.returncode}). Check the latest file in /logs/."
             )
             return 1
         if time.monotonic() > deadline:
-            sys.stderr.write(
+            print(
                 "Backend startup timed out (no manifest after "
-                f"{BACKEND_STARTUP_TIMEOUT:.0f}s). Check the latest file in /logs/.\n"
+                f"{BACKEND_STARTUP_TIMEOUT:.0f}s). Check the latest file in /logs/."
             )
             backend.terminate()
             return 1
         time.sleep(0.2)
 
+    print("Backend ready. Starting GUI...")
     gui = subprocess.Popen(
         [sys.executable, str(FRONTEND_GUI)],
         cwd=str(FRONTEND_GUI.parent),
@@ -73,11 +79,10 @@ def main() -> int:
     except KeyboardInterrupt:
         pass
     finally:
-        # Backend shuts down cleanly via its finally handlers when terminated.
-        # GUI is hard-stopped if still running (window already closed otherwise).
+        print("Shutting down backend...")
         for proc in (gui, backend):
             if proc.poll() is None:
-                proc.terminate()
+                _terminate_tree(proc)
         for proc in (gui, backend):
             try:
                 proc.wait(timeout=10.0)
@@ -85,6 +90,23 @@ def main() -> int:
                 proc.kill()
 
     return 0
+
+
+def _terminate_tree(proc: subprocess.Popen) -> None:
+    """Kill a process and all of its descendants.
+
+    On Windows, the default subprocess.terminate() leaves orphan grandchildren
+    (e.g. the sensor subprocesses spawned by the backend), which then hold
+    shared-memory handles and block the next launch. ``taskkill /F /T`` walks
+    the process tree and kills everything cleanly.
+    """
+    if sys.platform == "win32":
+        subprocess.run(
+            ["taskkill", "/F", "/T", "/PID", str(proc.pid)],
+            capture_output=True,
+        )
+    else:
+        proc.terminate()
 
 
 if __name__ == "__main__":
