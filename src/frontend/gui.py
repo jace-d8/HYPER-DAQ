@@ -338,9 +338,11 @@ class HyperDaqApp:
     # Callbacks  (all fire on main thread via DPG)
     # ------------------------------------------------------------------
 
-    def _on_log_toggle(self):
-        self._logging_enabled = not self._logging_enabled
-        if self._logging_enabled:
+    def _set_logging_ui(self, on: bool) -> None:
+        """Update the button + banner to reflect the given state. Does not
+        touch the on-disk state file."""
+        self._logging_enabled = on
+        if on:
             dpg.set_value("banner_text", "LOGGING ACTIVE — RECORDING MODE")
             dpg.configure_item("log_btn", label="Logging ON")
             dpg.bind_item_theme("log_btn", "t_btn_on")
@@ -350,12 +352,40 @@ class HyperDaqApp:
             dpg.configure_item("log_btn", label="Logging OFF")
             dpg.bind_item_theme("log_btn", "t_btn_off")
             dpg.bind_item_theme("banner", "t_banner_off")
+
+    def _write_logging_state_atomic(self, state: dict) -> None:
         try:
             LOGGING_STATE_FILE.parent.mkdir(parents=True, exist_ok=True)
-            with open(LOGGING_STATE_FILE, "w") as f:
-                json.dump({"enabled": self._logging_enabled}, f)
+            tmp = LOGGING_STATE_FILE.with_suffix(LOGGING_STATE_FILE.suffix + ".tmp")
+            with open(tmp, "w") as f:
+                json.dump(state, f)
+            tmp.replace(LOGGING_STATE_FILE)
         except Exception:
             pass
+
+    def _on_log_toggle(self):
+        new_state = not self._logging_enabled
+        if new_state:
+            ts = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+            run_dir = (LOGGING_STATE_FILE.parent / f"run_{ts}").resolve()
+            run_dir.mkdir(parents=True, exist_ok=True)
+            self._set_logging_ui(True)
+            self._write_logging_state_atomic({"enabled": True, "run_dir": str(run_dir)})
+        else:
+            self._set_logging_ui(False)
+            self._write_logging_state_atomic({"enabled": False})
+
+    def _sync_logging_state_from_disk(self) -> None:
+        """Reflect external changes to logging_state.json into the UI — covers
+        the unifier auto-stopping at the row cap."""
+        try:
+            with open(LOGGING_STATE_FILE, "r") as f:
+                state = json.load(f)
+        except (FileNotFoundError, json.JSONDecodeError):
+            return
+        on_disk = bool(state.get("enabled", False))
+        if on_disk != self._logging_enabled:
+            self._set_logging_ui(on_disk)
 
     def _on_window_changed(self):
         val = max(0.5, float(dpg.get_value("win_val") or 0))
@@ -378,7 +408,51 @@ class HyperDaqApp:
         tag = f"plot_{group}"
         if dpg.does_item_exist(tag):
             dpg.configure_item(tag, show=enabled)
+        self._layout_plots()
         self._save_settings()
+
+    def _layout_plots(self):
+        """Recompute panel and plot sizes to fill the current viewport.
+        Called on viewport resize and whenever a group is toggled."""
+        try:
+            vw = dpg.get_viewport_client_width()
+            vh = dpg.get_viewport_client_height()
+        except Exception:
+            vw = dpg.get_viewport_width()
+            vh = dpg.get_viewport_height()
+
+        # Top-level columns fill the body height (everything under the banner).
+        body_h = max(200, vh - self._BANNER_H - 8)
+        main_w = max(400, vw - self._SIDEBAR_W - self._METRICS_W - 30)
+
+        for tag, w, h in (
+            ("sidebar", self._SIDEBAR_W, body_h),
+            ("main_panel", main_w, body_h),
+            ("metrics_panel", self._METRICS_W, body_h),
+        ):
+            if dpg.does_item_exist(tag):
+                dpg.configure_item(tag, width=w, height=h)
+
+        # Banner + toolbar + separator + per-card chrome = ~110 px overhead,
+        # plus ~30 px of header per custom-graph card.
+        custom_header_overhead = len(self._custom_graphs) * 30
+        available = body_h - 110 - custom_header_overhead
+
+        visible_main = [g for g in ALL_SENSOR_GROUPS if self._group_visible.get(g, True)]
+        n_total = len(visible_main) + len(self._custom_graphs)
+        if n_total == 0:
+            return
+        plot_h = max(160, available // n_total)
+
+        for group in ALL_SENSOR_GROUPS:
+            tag = f"plot_{group}"
+            if dpg.does_item_exist(tag) and self._group_visible.get(group, True):
+                dpg.set_item_height(tag, plot_h)
+
+        for graph in self._custom_graphs:
+            tag = f"cg_plot_{graph['id']}"
+            if dpg.does_item_exist(tag):
+                dpg.set_item_height(tag, plot_h)
 
     def _on_left_click(self):
         for group in ALL_SENSOR_GROUPS:
@@ -431,6 +505,7 @@ class HyperDaqApp:
         if not sensors:
             return
         self._add_custom_graph_from_config(group, sensors)
+        self._layout_plots()
         self._save_settings()
 
     def _remove_custom_graph(self, gid: int):
@@ -440,6 +515,7 @@ class HyperDaqApp:
         self._custom_xaxis.pop(gid, None)
         self._custom_yaxis.pop(gid, None)
         self._custom_series.pop(gid, None)
+        self._layout_plots()
         self._save_settings()
 
     def _add_note(self):
@@ -464,17 +540,28 @@ class HyperDaqApp:
                 dpg.add_separator()
 
     def _on_save(self):
-        dpg.add_file_dialog(
+        fmt = self._save_format  # "csv" | "json" | "xlsx"
+        # File dialogs must be created as a context so extension filters can be
+        # registered. Default filename is the bare stem; extension is appended
+        # in _do_save based on the active format.
+        with dpg.file_dialog(
             label="Save Data",
             callback=self._do_save,
-            default_filename=f"cryo_data.{self._save_format}",
+            default_filename="cryo_data",
             width=640, height=420,
-        )
+            modal=True,
+            directory_selector=False,
+        ):
+            dpg.add_file_extension(f".{fmt}", color=(102, 187, 255, 255))
+            dpg.add_file_extension(".*")
 
     def _do_save(self, sender, app_data):
         path = (app_data or {}).get("file_path_name", "")
         if not path:
             return
+        expected_ext = f".{self._save_format.lower()}"
+        if not path.lower().endswith(expected_ext):
+            path = path + expected_ext
         with self._lock:
             df = self._df.copy()
         if dpg.get_value("save_scope") and not df.empty:
@@ -728,6 +815,9 @@ class HyperDaqApp:
                 "rb": rb,
                 "last_idx": 0,
             })
+        # Adopt the controller's time origin so display ct matches CSV time_min.
+        if "start_monotonic" in manifest:
+            self._session_start = float(manifest["start_monotonic"])
         return attached
 
     def _poll(self):
@@ -775,10 +865,10 @@ class HyperDaqApp:
             time.sleep(self._POLL_S)
 
     def _wall_clock_data_time(self) -> float:
-        """Monotonic seconds since this GUI session started, in minutes.
-        Used as the time_min for unified display rows. Storage is
-        per-sensor with its own native timestamps — this is only for the
-        in-memory display frame."""
+        """Minutes since the controller's start_monotonic (taken from the
+        manifest in _attach_buffers). The CSV ``time_min`` columns share
+        this exact reference, so on-disk timestamps match what's on the
+        chart x-axis."""
         if not hasattr(self, "_session_start"):
             self._session_start = time.monotonic()
         return (time.monotonic() - self._session_start) / 60.0
@@ -799,6 +889,11 @@ class HyperDaqApp:
         self._apply_settings()
         dpg.set_primary_window("primary", True)
         dpg.show_viewport()
+        # Snap to whichever monitor the window opens on, then redistribute
+        # plot heights to actually fill that screen.
+        dpg.maximize_viewport()
+        self._layout_plots()
+        dpg.set_viewport_resize_callback(lambda s, a: self._layout_plots())
 
         threading.Thread(target=self._poll, daemon=True).start()
 
@@ -816,6 +911,14 @@ class HyperDaqApp:
                 self._update_metrics(df)
 
             self._slide_axes()
+
+            # Cheap once-per-second sync of logging button to disk state —
+            # picks up the unifier's auto-stop when it hits the row cap.
+            now_mono = time.monotonic()
+            if now_mono - getattr(self, "_last_log_sync", 0.0) > 1.0:
+                self._last_log_sync = now_mono
+                self._sync_logging_state_from_disk()
+
             dpg.render_dearpygui_frame()
 
         dpg.destroy_context()

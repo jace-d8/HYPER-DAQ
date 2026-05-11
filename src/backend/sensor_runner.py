@@ -2,20 +2,27 @@
 
 Spawned by the controller via multiprocessing.Process(target=run_sensor, ...).
 Imports the driver, connects, then loops:
-    read() → push to ring buffer → write CSV row.
+    read() → push to ring buffer → (write CSV row if logging is ON)
 
-Per-sensor CSV in data_dir captures every reading at native rate.
-Ring buffer (shared memory) carries readings to live consumers.
+Logging state is gated by ``logging_state.json``; we poll it every
+LOGGING_POLL_PERIOD seconds. Per-sensor CSV lives in the active run
+directory, only opened on the OFF→ON edge.
+
+All time_min values use ``start_monotonic`` (passed in from the parent)
+as the reference, so every CSV and the GUI display share a time frame.
 """
 
 import csv
 import importlib
+import json
 import logging
 import time
-from datetime import datetime
 from pathlib import Path
 
 from src.backend.shared_buffer import SensorRingBuffer
+
+
+LOGGING_POLL_PERIOD = 0.5  # seconds between logging_state.json checks
 
 
 def _coerce(values, channels):
@@ -30,7 +37,22 @@ def _coerce(values, channels):
     )
 
 
-def run_sensor(spec: dict, shm_name: str, capacity: int, data_dir: str, stop_event):
+def _read_state(path: Path) -> dict:
+    try:
+        with open(path, "r") as f:
+            return json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return {}
+
+
+def run_sensor(
+    spec: dict,
+    shm_name: str,
+    capacity: int,
+    start_monotonic: float,
+    logging_state_path: str,
+    stop_event,
+):
     """Long-running entry point. Returns when stop_event is set."""
     name = spec["name"]
     channels = spec["channels"]
@@ -59,23 +81,61 @@ def run_sensor(spec: dict, shm_name: str, capacity: int, data_dir: str, stop_eve
         create=False,
     )
 
-    Path(data_dir).mkdir(parents=True, exist_ok=True)
-    ts = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    csv_path = Path(data_dir) / f"{name}_{ts}.csv"
-    csv_fh = open(csv_path, "w", newline="")
-    csv_writer = csv.writer(csv_fh)
-    csv_writer.writerow(["time_min"] + channels)
-    csv_fh.flush()
-
     period = 1.0 / float(getattr(sensor, "poll_hz", 15))
-    start = time.monotonic()
+
+    state_path = Path(logging_state_path)
+    last_state_check = 0.0
+    csv_fh = None
+    csv_writer = None
+    current_run_dir: Path | None = None
+
+    def _open_csv(run_dir: Path):
+        nonlocal csv_fh, csv_writer, current_run_dir
+        run_dir.mkdir(parents=True, exist_ok=True)
+        path = run_dir / f"{name}.csv"
+        csv_fh = open(path, "w", newline="")
+        csv_writer = csv.writer(csv_fh)
+        csv_writer.writerow(["time_min"] + channels)
+        csv_fh.flush()
+        current_run_dir = run_dir
+        logging.info(f"opened {path}")
+
+    def _close_csv():
+        nonlocal csv_fh, csv_writer, current_run_dir
+        if csv_fh is not None:
+            try:
+                csv_fh.close()
+            except Exception:
+                pass
+            logging.info("closed CSV")
+        csv_fh = None
+        csv_writer = None
+        current_run_dir = None
 
     try:
         while not stop_event.is_set():
             t0 = time.monotonic()
+
+            # Check logging state on a slower cadence than the read loop.
+            if t0 - last_state_check >= LOGGING_POLL_PERIOD:
+                last_state_check = t0
+                state = _read_state(state_path)
+                want_logging = bool(state.get("enabled", False))
+                want_run_dir = Path(state["run_dir"]) if state.get("run_dir") else None
+
+                if want_logging and want_run_dir and (csv_fh is None or want_run_dir != current_run_dir):
+                    if csv_fh is not None:
+                        _close_csv()
+                    try:
+                        _open_csv(want_run_dir)
+                    except Exception as e:
+                        logging.error(f"open csv failed: {e}")
+                elif not want_logging and csv_fh is not None:
+                    _close_csv()
+
             try:
                 payload = sensor.read()
-                t_min = (t0 - start) / 60.0
+                t_min = (t0 - start_monotonic) / 60.0
 
                 if payload is None:
                     values = [None] * len(channels)
@@ -84,24 +144,22 @@ def run_sensor(spec: dict, shm_name: str, capacity: int, data_dir: str, stop_eve
 
                 rb.push(t_min, values)
 
-                row = [f"{t_min:.6f}"]
-                for v in values:
-                    if isinstance(v, (int, float)) and v == v:  # not NaN
-                        row.append(f"{v:.6f}")
-                    else:
-                        row.append("")
-                csv_writer.writerow(row)
-                csv_fh.flush()
+                if csv_writer is not None:
+                    row = [f"{t_min:.6f}"]
+                    for v in values:
+                        if isinstance(v, (int, float)) and v == v:
+                            row.append(f"{v:.6f}")
+                        else:
+                            row.append("")
+                    csv_writer.writerow(row)
+                    csv_fh.flush()
             except Exception as e:
                 logging.error(f"read failed: {e}")
 
             if stop_event.wait(max(0.0, period - (time.monotonic() - t0))):
                 break
     finally:
-        try:
-            csv_fh.close()
-        except Exception:
-            pass
+        _close_csv()
         if hasattr(sensor, "close"):
             try:
                 sensor.close()
