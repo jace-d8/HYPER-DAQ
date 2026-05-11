@@ -428,7 +428,7 @@ There may be occasional gaps in the gui display. By default, the last read value
 is repeated, but I allowed for gaps for data analysis accuracy. You may see 
 gaps due to:
 
-1. **Windows OS deschedules a Python thread for hundreds of ms.** Antivirus
+1. **Although uncommonn, windows OS can deschedule a Python thread for hundreds of ms.** Antivirus
    scans, system services, GPU workload from the GUI. The snapshot is
    purely software and can't prevent this, it's due to 'user-mode'
    Python on Windows. **For NI-DAQ this is effectively lossless**, the
@@ -447,6 +447,15 @@ gaps due to:
    - Lower `sample_hz` if you don't need that resolution.
    - Make sure `poll_hz` is set so reads happen frequently enough that the
      buffer never gets close to full.
+
+
+### Performance tweaks (optional)
+
+Two Windows settings that reduce subprocess deschedules and can increase smoothness. Both are one-time, machine-level.
+
+- **Exclude the project folder from Windows Defender.** Settings → Privacy & security → Windows Security → Virus & threat protection → Manage settings → Add or remove exclusions → Add a Folder → pick the `HYPER-DAQ` folder.
+- **Set power plan to High Performance.** Control Panel → Power Options → High performance.
+
 
 ### Shutdown semantics
 
