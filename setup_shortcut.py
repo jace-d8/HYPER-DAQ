@@ -75,7 +75,7 @@ def _create_shortcut_windows(target: Path, icon: Path, name: str = "HYPER-DAQ") 
         f"$s.WorkingDirectory = '{target.parent}'; "
         f"$s.IconLocation = '{icon}'; "
         f"$s.Description = 'HYPER-DAQ - sensor data acquisition'; "
-        f"$s.WindowStyle = 7; "  # minimised — hides the launcher's console
+        f"$s.WindowStyle = 1; "  # normal window so errors are visible
         f"$s.Save()"
     )
     result = subprocess.run(
