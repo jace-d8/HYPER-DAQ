@@ -4,12 +4,17 @@ from alicat import FlowController
 
 
 class Alicat(SensorBase):
-    """Sync wrapper over alicat's async FlowController. Drives a private event
-    loop inside the driver so the controller can stay free of asyncio."""
+    """Sync wrapper over alicat's async FlowController.
+
+    The alicat library's FlowController.__init__ schedules an async connect
+    task internally (via asyncio.create_task), which requires a running
+    event loop. We construct it *inside* a coroutine driven by our private
+    event loop so the controller never has to know about asyncio.
+    """
 
     def __init__(self, name="alicat"):
         super().__init__(name)
-        self.flowcontroller = FlowController()
+        self.flowcontroller = None
         self.connected = False
         self.poll_hz = 40
         self._loop = None
@@ -17,9 +22,21 @@ class Alicat(SensorBase):
     def _run(self, coro):
         return self._loop.run_until_complete(coro)
 
+    async def _setup(self):
+        fc = FlowController()
+        # The library kicks off a connect coroutine in its __init__; wait for
+        # it to actually finish before we start querying.
+        connect_task = getattr(fc, "connectTask", None)
+        if connect_task is not None:
+            await connect_task
+        # Prime with a read so we fail loudly here if the device isn't reachable.
+        await fc.get()
+        return fc
+
     def connect(self):
         self._loop = asyncio.new_event_loop()
-        self._run(self.flowcontroller.get())
+        asyncio.set_event_loop(self._loop)
+        self.flowcontroller = self._run(self._setup())
         self.connected = True
 
     def read(self):
@@ -29,4 +46,10 @@ class Alicat(SensorBase):
 
     def close(self):
         if self._loop and not self._loop.is_closed():
+            try:
+                close_coro = getattr(self.flowcontroller, "close", None)
+                if asyncio.iscoroutinefunction(close_coro):
+                    self._run(close_coro())
+            except Exception:
+                pass
             self._loop.close()
