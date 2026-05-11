@@ -58,23 +58,21 @@ SENSOR_SPECS = [
         "channels": ["Total Flow"],
         "group": "Mass Flow Rate",
     },
-    # --- Example: 2 current sensors via NI-DAQ (4-20 mA loop) --------------
-    # # Uncomment, requires nidaqmx installed.
-    # {
-    #     "name": "NI_Pressure",
-    #     "module": "src.drivers.niDaq",
-    #     "class": "NiDaqTask",
-    #     "kwargs": {
-    #         "name": "NI_Pressure",
-    #         "channels": [
-    #             NiDaqChannelConfig(name="PT1", physical_channel="cDAQ2Mod1/ai0", measurement_type="current", min_val=0.002, max_val = 0.004),
-    #             NiDaqChannelConfig(name="PT2", physical_channel="cDAQ2Mod1/ai2", measurement_type="current", min_val=0.002, max_val = 0.004),
-    #         ],
-    #         "sample_hz": 15,
-    #     },
-    #     "channels": ["PT1", "PT2", "PT3", "PT4", "PT5", "PT6", "PT7"],
-    #     "group": "Pressure",
-    # },
+    {
+        "name": "NI_Pressure",
+        "module": "src.drivers.niDaq",
+        "class": "NiDaqTask",
+        "kwargs": {
+            "name": "NI_Pressure",
+            "channels": [
+                NiDaqChannelConfig(name="PT1", physical_channel="cDAQ2Mod1/ai0", measurement_type="current", min_val=0.002, max_val = 0.004),
+                NiDaqChannelConfig(name="PT2", physical_channel="cDAQ2Mod1/ai2", measurement_type="current", min_val=0.002, max_val = 0.004),
+            ],
+            "sample_hz": 15,
+        },
+        "channels": ["PT1", "PT2", "PT3", "PT4", "PT5", "PT6", "PT7"],
+        "group": "Pressure",
+    },
 ]
 
 
