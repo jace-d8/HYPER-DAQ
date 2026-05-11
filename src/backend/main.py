@@ -1,3 +1,7 @@
+"""Entry point for the program.
+Runs the controller. Configures log and data directories
+"""
+
 import logging
 from datetime import datetime
 from pathlib import Path
@@ -12,6 +16,7 @@ LOGGING_STATE_FILE = DATA_DIR / "logging_state.json"
 LOGS_DIR.mkdir(parents=True, exist_ok=True)
 log_filename = LOGS_DIR / f"run_{datetime.now():%Y-%m-%d_%H-%M-%S}.log"
 
+# Log files format
 logging.basicConfig(
     filename=log_filename,
     level=logging.INFO,

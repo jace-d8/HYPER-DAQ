@@ -1,32 +1,21 @@
-Ldash
-plotly~=6.6.0
-pandas~=3.0.1
-numpy~=2.4.2
-pyserial~=3.5
-alicat~=0.9.0
-lakeshore~=1.9.2
-openpyxl
-nidaqmx
-uvicorn~=0.46.0
-fastapi~=0.136.1
-pydantic~=2.13.3
-dash~=4.1.0
-requests~=2.33.0
-pip~=24.3.1
-pillow~=12.1.1
-Jinja2~=3.1.6
-setuptools~=82.0.1
-wakepy~=1.0.0
-typing_extensions~=4.15.0
-iso8601~=2.1.0
-packaging~=26.0
-zipp~=3.23.0
-PySide6~=6.11.0
-six~=1.17.0
-python-dateutil~=2.9.0.post0
-matplotlib~=3.10.8
-contourpy~=1.3.3
-fonttools~=4.61.1
-pyparsing~=3.3.2
-cycler~=0.12.1
-kiwisolver~=1.4.9
+# HYPER-DAQ dependencies.
+#
+# Install into the virtual environment (venv) with:
+#     pip install -r requirements.txt
+
+# --- GUI + data handling ---
+dearpygui>=1.10           # the live plot GUI
+pandas>=2.0               # in-memory data frame and CSV/JSON/XLSX export
+numpy>=1.24               # shared-memory ring-buffer views, math
+openpyxl>=3.1             # pandas XLSX backend (used by Save As → .xlsx)
+
+# --- Sensor drivers (always required by the current SENSOR_SPECS) ---
+pyserial>=3.5             # Lakeshore 218 (serial)
+lakeshore>=1.6            # Lakeshore 336
+alicat>=0.6               # Alicat flow controller
+
+# --- NI-DAQ (active on machines with NI hardware) ---
+nidaqmx>=1.0
+
+# --- One-time setup tooling ---
+Pillow>=10.0              # For the app setup
