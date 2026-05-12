@@ -407,8 +407,7 @@ running. Default branch is `main`.
 | `backend-multiprocess` | DearPyGUI | multiprocessing only | Same backend as `main` in isolation, for cherry-picking into other forks.                                                                                                                                |
 | `backend-thread` | DearPyGUI | threading only | Sensors run as threads under one Python process. Best on **GPU-heavy machines that are CPU-light**, fewer processes means less context-switching overhead.                                               |
 
-I advise using `main`. Only use other branches if there is 
-a specific reason (browser-accessible display, very few
+Only use other branches if there is a specific reason (browser-accessible display, very few
 CPU cores, etc.).
 
 ### Why the main branch uses subprocesses instead of threads
@@ -470,3 +469,10 @@ When you close the GUI window:
 
 If you ever do see stale `python.exe` processes in Task Manager (e.g.,
 after a power loss), end them all manually before relaunching.
+
+
+---
+
+Jace Dunn  
+HYPER, WSU  
+jace.dunn@wsu.edu
