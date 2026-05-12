@@ -10,8 +10,7 @@ a real-time GUI, and writes per-run CSVs to disk.
 - [Sensor configuration](#sensor-configuration)
 - [Changing GUI stuff](#changing-gui-stuff)
 - [How the system works](#how-the-system-works)
-  - [Branches](#branches)
-  - [Where graph gaps come from](#where-graph-gaps-come-from)
+
 
 ---
 

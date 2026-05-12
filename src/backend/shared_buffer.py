@@ -7,11 +7,6 @@ Layout (all little-endian, native byte order):
     bytes 24..    capacity rows of (1 + num_channels) float64 values
                   each row: (timestamp_min, ch0, ch1, ..., chN-1)
 
-Producer writes the row first, then increments write_idx — so a consumer
-that reads write_idx and then reads up to that index will always see at
-least the rows that existed at read time. A torn read is possible if the
-consumer races a write, but for our 10-50 Hz producer / 30-60 Hz consumer
-the worst case is one stale row that gets corrected on the next pass.
 """
 
 from __future__ import annotations
@@ -39,7 +34,6 @@ class SensorRingBuffer:
             try:
                 self._shm = shared_memory.SharedMemory(name=name, create=True, size=total)
             except FileExistsError:
-                # Stale segment from a previous crash — reclaim and recreate.
                 stale = shared_memory.SharedMemory(name=name, create=False)
                 stale.close()
                 stale.unlink()

@@ -25,7 +25,6 @@ from pathlib import Path
 from src.backend.shared_buffer import SensorRingBuffer
 from src.backend.sensor_runner import run_sensor
 
-# Optional NI-DAQ import — only needed if NIDaq specs are uncommented below.
 # Guarded so machines without nidaqmx installed can still import this module.
 try:
     from src.drivers.niDaq import NiDaqChannelConfig  # noqa: F401
@@ -33,9 +32,7 @@ except ImportError:
     NiDaqChannelConfig = None  # type: ignore
 
 
-# ---------------------------------------------------------------------------
 # Sensor specifications
-# ---------------------------------------------------------------------------
 
 SENSOR_SPECS = [
     {
@@ -162,7 +159,7 @@ class UnifierThread(threading.Thread):
         while not self.stop_event.is_set():
             tick_t0 = time.monotonic()
 
-            # Refresh latest values from every ring buffer.
+            # Refresh the latest values from every ring buffer.
             for i, entry in enumerate(self.buffers):
                 rows, new_idx = entry["rb"].snapshot(per_sensor_last_idx[i])
                 per_sensor_last_idx[i] = new_idx

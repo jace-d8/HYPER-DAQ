@@ -343,7 +343,7 @@ class HyperDaqApp:
         touch the on-disk state file."""
         self._logging_enabled = on
         if on:
-            dpg.set_value("banner_text", "LOGGING ACTIVE — RECORDING MODE")
+            dpg.set_value("banner_text", "LOGGING ACTIVE")
             dpg.configure_item("log_btn", label="Logging ON")
             dpg.bind_item_theme("log_btn", "t_btn_on")
             dpg.bind_item_theme("banner", "t_banner_on")
@@ -376,8 +376,6 @@ class HyperDaqApp:
             self._write_logging_state_atomic({"enabled": False})
 
     def _sync_logging_state_from_disk(self) -> None:
-        """Reflect external changes to logging_state.json into the UI — covers
-        the unifier auto-stopping at the row cap."""
         try:
             with open(LOGGING_STATE_FILE, "r") as f:
                 state = json.load(f)
@@ -575,9 +573,6 @@ class HyperDaqApp:
         except Exception as e:
             dpg.set_value("save_status", f"Error: {e}")
 
-    # ------------------------------------------------------------------
-    # Live updates  (called from main loop — always on main thread)
-    # ------------------------------------------------------------------
 
     def _wall_clock_ct(self, df: pd.DataFrame) -> float:
         """Right edge of sliding window, anchored to wall-clock so it advances
@@ -805,7 +800,6 @@ class HyperDaqApp:
                     create=False,
                 )
             except FileNotFoundError:
-                # Some segments not ready yet — bail and retry later.
                 for entry in attached:
                     entry["rb"].close()
                 return []
@@ -829,7 +823,6 @@ class HyperDaqApp:
             if not attached:
                 time.sleep(0.5)
 
-        # Latest known value per channel — feeds the unified row each tick.
         latest: dict = {}
 
         while dpg.is_dearpygui_running():
@@ -898,7 +891,7 @@ class HyperDaqApp:
         threading.Thread(target=self._poll, daemon=True).start()
 
         while dpg.is_dearpygui_running():
-            # Drain queue — process only the latest update per frame
+            # Drain queue
             df = None
             try:
                 while True:
@@ -912,7 +905,6 @@ class HyperDaqApp:
 
             self._slide_axes()
 
-            # Cheap once-per-second sync of logging button to disk state —
             # picks up the unifier's auto-stop when it hits the row cap.
             now_mono = time.monotonic()
             if now_mono - getattr(self, "_last_log_sync", 0.0) > 1.0:

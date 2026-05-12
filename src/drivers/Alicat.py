@@ -5,11 +5,6 @@ from alicat import FlowController
 
 class Alicat(SensorBase):
     """Sync wrapper over alicat's async FlowController.
-
-    The alicat library's FlowController.__init__ schedules an async connect
-    task internally (via asyncio.create_task), which requires a running
-    event loop. We construct it *inside* a coroutine driven by our private
-    event loop so the controller never has to know about asyncio.
     """
 
     def __init__(self, name="alicat"):

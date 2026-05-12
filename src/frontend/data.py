@@ -186,9 +186,6 @@ def empty_frame() -> pd.DataFrame:
 
 
 def load_stream_source() -> pd.DataFrame:
-    """Legacy entry point — Tier-3 GUI builds its DataFrame from shared-memory
-    ring buffers, not a CSV. Kept as a no-op for backward compat with any
-    callers that haven't been updated yet."""
     df = empty_frame()
     return DataAdapter.normalize(df)
 
