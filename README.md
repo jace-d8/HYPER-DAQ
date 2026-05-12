@@ -197,7 +197,7 @@ NiDaqChannelConfig(
 - Current: amps (so 4-20 mA = `min_val=0.004, max_val=0.020`)
 - Thermocouple / RTD: degrees C
 
-Tightening this range to your actual signal improves the DAQ's resolution
+Tightening this range to the actual signal range improves the DAQ's resolution
 (it picks the best gain stage for the declared range). 
 
 Not all the specifications shown above are required to configure the DAQ,
